@@ -43,6 +43,11 @@ The scripts require Python 3.10 or later with NumPy, SciPy, and pandas; training
 - `tools_v3/s24_test_statistics.py` and `tools_v3/analyze_s24_test_report.py` recompute and audit the core-test results in Table S5.
 - `tools/budget_robust_reporting.py` and `tools/budget_robust_reporting_round2.py` evaluate the reporting rules R0–R6.
 
+## Version history
+
+- v1.1: Fig. S1 and the input and output images in the architecture figure now use a procedurally generated synthetic crack image (`figure_scripts/make_synthetic_crack.py`) instead of a DeepCrack537 image, whose license is restricted to non-commercial research and education. v1.0 contained that DeepCrack537 image in Fig. S1; it is not covered by the CC BY 4.0 license of this repository.
+- v1.0: Initial release.
+
 ## Licenses
 
 - Data, documents, figures, and supplemental materials: Creative Commons Attribution 4.0 International (CC BY 4.0), see `LICENSE-DATA`.

@@ -2,7 +2,7 @@
 
 Rules: figures/插图修改经验记录_2026-11-05.md, section 5.2.
 The operators are applied to an illustrative non-negative map, r = max(0, (t - g) / t),
-with g the grey level of one DeepCrack537 *validation* image and t its 13th percentile, rounded to 0.01.
+with g the grey level of a synthetic crack image (tools_fig/make_synthetic_crack.py) and t its 13th percentile, rounded to 0.01.
 The clipping mimics post-ReLU features (most values zero); it is not a network feature map.
 alpha = 0.75 is for illustration only (the trained alpha is learned, initial value 0.5).
 """
@@ -22,11 +22,11 @@ ASSETS = ROOT / "figures" / "assets"
 INK, GREY = C["ink"], C["dark"]
 RED, BLUE = PAL["red"], PAL["blue"]
 ALPHA = 0.75
-Y0, X0, S = 140, 316, 24          # zoomed patch in the image (rows, cols, size in pixels)
-WI, WJ = 7, 5                     # the highlighted 2x2 window, in pooled coordinates
+Y0, X0, S = 122, 338, 24          # zoomed patch in the image (rows, cols, size in pixels)
+WI, WJ = 7, 6                     # the highlighted 2x2 window, in pooled coordinates
 
-rgb = np.asarray(Image.open(ASSETS / "test__11240-8_11240-8.jpg").convert("RGB"))
-g = np.asarray(Image.open(ASSETS / "test__11240-8_11240-8.jpg").convert("L"), float) / 255
+rgb = np.asarray(Image.open(ASSETS / "synthetic_crack.png").convert("RGB"))
+g = np.asarray(Image.open(ASSETS / "synthetic_crack.png").convert("L"), float) / 255
 t = np.percentile(g, 13)
 r = np.round(np.clip((t - g) / t, 0, 1), 2)   # two decimals, so the printed window arithmetic is exact
 
@@ -90,7 +90,7 @@ TOP = 46
 a_in = img_ax(3, TOP, 46, 46 * 384 / 544)
 a_in.imshow(rgb)
 a_in.add_patch(Rectangle((X0 - 0.5, Y0 - 0.5), S, S, fill=False, ec=RED, lw=0.9))
-text(26, TOP - 3.5, "Input image (validation)")
+text(26, TOP - 3.5, "Synthetic crack image (schematic)")
 
 ZS = 30
 a_z = img_ax(58, TOP + 1.5, ZS, ZS)

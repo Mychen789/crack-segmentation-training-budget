@@ -112,7 +112,7 @@ for k in range(4):
     arrow([(xc + DW / 2 + 0.8, DY), (x1 - 0.3, DY)])
 
 # ------------------------------------------------------------------ input image
-img = plt.imread(str(ASSETS / "test__11240-8_11240-8.jpg"))
+img = plt.imread(str(ASSETS / "synthetic_crack.png"))
 IW, IH = 27, 27 * 384 / 544
 ix, iy = 6, 34
 ax.imshow(img, extent=(ix, ix + IW, iy, iy + IH), zorder=3)
@@ -150,7 +150,7 @@ OX, OY, OW, OH = 152, dec_y[3] - 2.5, 18, 5
 box3d(OX, OY, OW, OH, OUT_FC, d=1.6)
 text(OX + OW / 2, OY + OH / 2, "1×1 conv.", size=7.5)
 arrow([(DX + DBW + 1.3, dec_y[3]), (OX - 0.2, dec_y[3])])
-mask = plt.imread(str(ASSETS / "test__11240-8_11240-8.png"))
+mask = plt.imread(str(ASSETS / "synthetic_crack_mask.png"))
 MW, MH = 25, 25 * 384 / 544
 mx, my = OX + OW / 2 - MW / 2 + 0.8, 48
 ax.imshow(mask, cmap="gray", vmin=0, vmax=1, extent=(mx, mx + MW, my, my + MH), zorder=3)

@@ -6,7 +6,7 @@ HERE = Path(__file__).resolve().parent
 TOOLS = HERE.parents[1] / 'tools_fig'
 
 fig3 = {
-    '"输入图像（验证集）"': '"Input image (validation)"',
+    '"合成裂缝图像（示意）"': '"Synthetic crack image (schematic)"',
     '"局部放大（24 × 24 像素）"': '"Local crop (24 × 24 pixels)"',
     '"非负响应图（示意）"': '"Nonnegative response (schematic)"',
     '"排序"': '"sort"',
