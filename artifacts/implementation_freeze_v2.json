@@ -1,0 +1,125 @@
+{
+  "schema_version": "1.0",
+  "record_type": "preformal_implementation_freeze",
+  "status": "FROZEN_EXECUTION_AUTHORIZED",
+  "freeze_date": "2026-09-21",
+  "supersedes": {
+    "path": "baseline_platform/artifacts/implementation_freeze_v1.json",
+    "sha256": "58694228c2d66d5454266cffccd35832b38bdea7bc9bdf36db39828ca5ccaf9c"
+  },
+  "decision_log": {
+    "path": "phase1_protocol_audit/decision_log_2026-09-21_h1_control_capacity_match.md",
+    "sha256": "36eddce2724427bbe7220c567cf622b1f5909e4794c0cb8d28092b757e3b343e"
+  },
+  "reason": "Add two capacity-matched controls for the H1 contrast. The frozen upper-tail control matches the parameter count of static BTSP but registers a scalar whose gradient is analytically zero, so it degenerates to avg_top2 and confounds the lower-tail input with the presence of a usable fusion degree of freedom.",
+  "files": {
+    "baseline_platform/src/surface_crack/research_pooling.py": "2830bd30d204145310bec00d277e9ee26615655a5ff999a0c7a3b70640432157",
+    "baseline_platform/src/surface_crack/tail_statistics.py": "8954238024e9ab9598c2c848b0482af672ec07d754381b8685a6748c06c3a842",
+    "baseline_platform/src/surface_crack/pooling.py": "b75e0f9a89e3bcebf9d94b88a665b142bbbf138a5dadee476276c6c794a5f3da",
+    "baseline_platform/src/surface_crack/models.py": "c402e7c1092ee8b3230fa0db3f8646f8921503cb03aa516bab8210366c487cee",
+    "baseline_platform/src/surface_crack/resnet_unet.py": "684403097d094dca115e8ab8a5ecd306d84db5b6a7f594a748b34e1508e4599e",
+    "baseline_platform/src/surface_crack/metrics.py": "ec8399306bfc9269dadbb17f60e4417b533439b09685a7d5efcd72ef4f151277",
+    "baseline_platform/src/surface_crack/extended_metrics.py": "f97e7b62481fa01bb5456e2d10b1347642aca569374fd5c621fa3ff8f6f9a1ba",
+    "baseline_platform/src/surface_crack/spatial.py": "824827d2e98e745203ae01e681214d1eb02bf06c0f5b03058082faa2249fdeb1",
+    "baseline_platform/src/surface_crack/data.py": "a03b796b0d5c133d8d367b641da43b9c738616d2f5b50ad672375e244c595aee",
+    "baseline_platform/src/surface_crack/config.py": "2952f8beaf3691cffbe292d55f6361aecbab0b1d65631d27995b94384493f986",
+    "baseline_platform/tools/train_pooling_experiment.py": "a6ac343b3c3324763ddb1637cc8f6c7be349d97bb189a5061aad08f9a6dc2da1",
+    "baseline_platform/tools/benchmark_pooling_efficiency.py": "eb1c60020688996e642c1eccc8f031b0f94e74c237d070ffecb0236ef8f2ded9",
+    "baseline_platform/tools/check_train_val_readiness.py": "b859547cb146867e57b65c31c9c7d25963441135ef1662ec4299aaaf6314c86a",
+    "baseline_platform/tools/summarize_train_val_runs.py": "90cfbd8d066b5d02c231f7630fc108db83ae7df52d6484e693ef21edd4d66107",
+    "baseline_platform/tools/portable_entry.py": "669921b6fcfc6eb1370ef8998d174e8e580d7ee504b5c3a1a4a2d338a4298a87"
+  },
+  "changed_since_v1": {
+    "baseline_platform/src/surface_crack/research_pooling.py": {
+      "v1": "cd66e8726b1cae89ef5775b23914d9d212519140d8ea170081f2adf4781c6993",
+      "v2": "2830bd30d204145310bec00d277e9ee26615655a5ff999a0c7a3b70640432157",
+      "change": "additive only: two operator classes, two factories, two registry names, two __all__ entries",
+      "edited_by_this_record": true
+    },
+    "baseline_platform/tools/train_pooling_experiment.py": {
+      "v1": "d8e13e78146b0c5f821c679a74023a25f594ab937db9e9eb15e83215adc9cb52",
+      "v2": "a6ac343b3c3324763ddb1637cc8f6c7be349d97bb189a5061aad08f9a6dc2da1",
+      "change": "two names appended to POOLING_CHOICES; no training logic touched",
+      "edited_by_this_record": true
+    },
+    "baseline_platform/src/surface_crack/models.py": {
+      "v1": "24802c14845653457e07affe7aacf1a2f707e530132eb7c428790281219275f4",
+      "v2": "c402e7c1092ee8b3230fa0db3f8646f8921503cb03aa516bab8210366c487cee",
+      "change": "already superseded on 2026-09-15 by the GroupNorm decision log; matches the execution authorization",
+      "edited_by_this_record": false
+    },
+    "baseline_platform/tools/summarize_train_val_runs.py": {
+      "v1": "63490a7e79dc8914ca852c191769b4d46bffe32c55cb4f8419684ba8ba62a45c",
+      "v2": "90cfbd8d066b5d02c231f7630fc108db83ae7df52d6484e693ef21edd4d66107",
+      "change": "already re-bound on 2026-09-09; matches the execution authorization",
+      "edited_by_this_record": false
+    }
+  },
+  "added_operators": {
+    "upper_tail_capacity_matched": {
+      "class": "CapacityMatchedUpperTailPool2d",
+      "form": "alpha * rank1_max + (1 - alpha) * top2_mean over each 2x2 window",
+      "initial_alpha": 0.5,
+      "unet_base32_groupnorm_parameters": 7765989,
+      "parameter_match_vs_btsp": "exact",
+      "fusion_gradient": "live",
+      "reads_lower_tail": false,
+      "role": "proposed primary H1 comparator for any future restatement"
+    },
+    "diag_partition_matched": {
+      "class": "DiagonalPartitionPool2d",
+      "form": "alpha * main_diagonal_mean + (1 - alpha) * anti_diagonal_mean over each 2x2 window",
+      "initial_alpha": 0.5,
+      "unet_base32_groupnorm_parameters": 7765989,
+      "parameter_match_vs_btsp": "exact",
+      "fusion_gradient": "live",
+      "equals_average_pooling_at_alpha_half": true,
+      "reads_lower_tail": true,
+      "role": "structural control for main line B; not eligible as the H1 primary control"
+    }
+  },
+  "preserved_operator_semantics": {
+    "verified_by": "tests/test_research_pooling.py::test_legacy_operator_outputs_are_unchanged",
+    "operators_pinned": [
+      "btsp",
+      "upper_tail_matched",
+      "avg_top2",
+      "t_max_avg",
+      "max",
+      "avg",
+      "min"
+    ],
+    "result": "PASS"
+  },
+  "verification": {
+    "baseline_test_count": 103,
+    "baseline_test_status": "PASS",
+    "test_count_at_v1": 97,
+    "tests_added": 6,
+    "legacy_operator_output_regression": "PASS",
+    "dead_scalar_pinned_for_upper_tail_matched": "PASS",
+    "capacity_matched_upper_lower_tail_closure": "PASS",
+    "capacity_matched_upper_live_gradient": "PASS",
+    "diagonal_partition_equals_avg_pool_at_alpha_half": "PASS",
+    "both_backbone_families_build_and_forward": "PASS",
+    "parameter_count_exact_match_vs_btsp": "PASS"
+  },
+  "execution_authorization": {
+    "path": "baseline_platform/artifacts/train_val_execution_authorization_v1.json",
+    "bound_hash_for_trainer": "a6ac343b3c3324763ddb1637cc8f6c7be349d97bb189a5061aad08f9a6dc2da1",
+    "current_hash_for_trainer": "a6ac343b3c3324763ddb1637cc8f6c7be349d97bb189a5061aad08f9a6dc2da1",
+    "binding_satisfied": true,
+    "required_action": "satisfied: the project owner re-signed the authorization against the new trainer hash on 2026-09-21",
+    "resigned_on": "2026-09-21",
+    "authorization_sha256_after_resign": "15bfe95163d6c77e55ea769aedbb86889d3314311f5c827473f061330cdf582f"
+  },
+  "formal_training_performed": false,
+  "validation_predictions_generated_during_freeze": false,
+  "test_or_external_test_used": false,
+  "h1_outcome_unchanged": {
+    "record": "phase1_protocol_audit/decision_log_2026-09-17_h1_not_supported.md",
+    "status": "NOT_SUPPORTED",
+    "note": "neither added operator may be used to restate H1 as supported"
+  },
+  "change_rule": "any modification to a listed file requires a versioned decision log and a new implementation freeze before formal execution"
+}

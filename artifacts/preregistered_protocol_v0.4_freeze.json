@@ -1,0 +1,127 @@
+{
+  "schema_version": "1.0",
+  "record_type": "preregistered_protocol_freeze",
+  "status": "FROZEN_METHODOLOGY_METHOD_ITERATION_STAGE",
+  "freeze_date": "2026-09-25",
+  "authorized_by": "project owner",
+  "statement_verbatim": "执行，接着做就行",
+  "statement_context": "回应 2026-09-23 的正确性审计报告与 v0.4 草案，该报告明确指出 v0.4 需签署后生效、其本身不构成执行授权，并列出三项待决：v0.4 签署、轮数预算实验、S5 抽样范围。",
+  "protocol": {
+    "path": "phase1_protocol_audit/preregistered_protocol_v0.4.md",
+    "sha256": "dcfe72538b363404aaad3fd1f20501d5f7ad678aa7b9381a6c83962c1a047664"
+  },
+  "supersedes": {
+    "path": "phase1_protocol_audit/preregistered_protocol_v0.3.md",
+    "sha256": "2fc0e74b97cb460bf51a94ac489ab85629497dfe0cd71d4abaf8598a658404be",
+    "note": "v0.3 及其继承的 v0.2 条款除 v0.4 明确改动者外继续有效"
+  },
+  "inherits": [
+    {
+      "path": "phase1_protocol_audit/decision_log_2026-09-17_h1_not_supported.md",
+      "sha256": "a8d2e5991da0fd6341ec7e6aa2d8489f177288b787d071ad737a9698bf3f7b1b"
+    },
+    {
+      "path": "phase1_protocol_audit/decision_log_2026-09-23_correctness_audit_and_metric_repair.md",
+      "sha256": "e502a8251e70d95efcb2ba7ee03dc7ab83f11ba21d90b2e50b9c0af156201dcd"
+    }
+  ],
+  "substantive_changes": [
+    "H1 记为 NOT SUPPORTED 且不重开；顺序门控由停止方法扩张改为进入方法迭代阶段，新方法一律标 exploratory",
+    "新增对照规格条款：对照须匹配有效自由度与初始函数，非仅参数计数；三者冲突时以前两者为准并如实报告计数差",
+    "修正 H3 的参数匹配静态门控条款，改以 V1 为静态对照",
+    "固化 Boundary-F1 为 0.01 倍图像对角线、原生网格测量，并声明其跨数据集不可比",
+    "clDice 在骨架算法替换前不得以拓扑名义引用",
+    "登记轮数预算与中心线损失项两项训练契约偏离",
+    "声明 14 个注册名中三对函数等价，实际互异算子 11 个"
+  ],
+  "unchanged": [
+    "数据角色",
+    "数据哈希",
+    "效应门槛 0.005",
+    "统计单位",
+    "group 划分",
+    "test 锁",
+    "主指标 FgIoU 的定义与聚合方式",
+    "H1 的未通过判定"
+  ],
+  "bound_source_files": {
+    "baseline_platform/src/surface_crack/extended_metrics.py": "4de20e99dc8c456b682cba0a747cfbe307ee7cda54c4cb7044cf1c8c90feffc5",
+    "baseline_platform/src/surface_crack/losses.py": "6fb8d0662989444ee9fab64cbaf688fa6d6a451054e9910c8f89bbcdfa5b2454",
+    "baseline_platform/src/surface_crack/research_pooling.py": "4def40293c2c406b8c17df6be8f752dca375bbcf9d1cc378df44f020e5b063ad",
+    "baseline_platform/src/surface_crack/evaluation.py": "ed69c1656aeacaece145e822778eed95cdccfa8bcb4feee600dd0318a0d098c8",
+    "baseline_platform/tools/train_pooling_experiment.py": "4c09615bf3742baad4ea4717b680d5631352a0dad79018725aeac349482eb16b",
+    "baseline_platform/tools/reevaluate_checkpoints.py": "6a55b9c6b76fdfa9d09c7b9bec626c524981db36add3e2763558c62d0b3b0dd8",
+    "baseline_platform/tools/probe_pooling_branches.py": "af57e756eaf24e813d73ca02ea3b889a6b1c98c0263e1633be4ebc7a70898d90",
+    "baseline_platform/tools/probe_alpha_sensitivity.py": "a9687919f1e3ffb17db1ad8203ba8e411fa29265b0c6523446fa1446b1d81ded",
+    "baseline_platform/src/surface_crack/resnet_unet.py": "c134bfb74c8bd8e7a929a7653a7613767ceaac980017369a8b47dcbddef323e2"
+  },
+  "verification": {
+    "baseline_test_count": 135,
+    "baseline_test_status": "PASS",
+    "test_count_at_freeze_v2": 103,
+    "tests_added": 26,
+    "recomputed_metrics": {
+      "path": "baseline_platform/artifacts/recomputed_validation_metrics_v1.json",
+      "runs": 84,
+      "sha256": "ed578300e020971f8a37462f1c9337b67efead3abd411e90e59b8bbe85ba6038"
+    }
+  },
+  "execution_authorization": {
+    "note": "本记录不构成执行授权。任何训练仍须 train_val_execution_authorization_v1.json 在对应哈希下的有效签署；本次签署未改动该记录。"
+  },
+  "test_authorized": false,
+  "external_test_authorized": false,
+  "integrity_note": "对本协议或所绑定源文件的任何改动都需要新版本与新的冻结记录。",
+  "amendments": [
+    {
+      "date": "2026-09-25",
+      "reason": "把 norm 贯通第二骨干以解除 G2 的代码侧阻塞，并以运行时确认修正冻结记录中的解析参数量期望",
+      "decision_log": {
+        "path": "phase1_protocol_audit/decision_log_2026-09-25_second_backbone_normalisation.md",
+        "sha256": "c4804135a2d3f9bc0f8beeb7df383db628870eb5b86d0290af0e0e0acb56ecc7"
+      },
+      "rebound": [
+        {
+          "path": "baseline_platform/tools/train_pooling_experiment.py",
+          "previous_sha256_prefix": "6a193bb4",
+          "new_sha256_prefix": "4c09615b"
+        }
+      ],
+      "added_to_binding": [
+        "baseline_platform/src/surface_crack/resnet_unet.py"
+      ],
+      "protocol_text_unchanged": true,
+      "baseline_test_count": 129,
+      "note": "train_val_execution_authorization_v1.json 也绑定 train_pooling_experiment.py，其绑定再次失效，训练前须重新签署。"
+    },
+    {
+      "date": "2026-09-29",
+      "reason": "clDice 的骨架由形态学骨架换为 Zhang-Suen 细化, 因前者不保连通性, 实测把 27 个分量的掩膜变成 354 个分量的骨架",
+      "decision_log": {
+        "path": "phase1_protocol_audit/decision_log_2026-09-29_cldice_skeleton_and_authorization.md",
+        "sha256": "ad4e22ddf5a831219f229d95b39fbd522c2487271de08b54d37747420074f47c"
+      },
+      "rebound": [
+        {
+          "path": "baseline_platform/src/surface_crack/extended_metrics.py",
+          "previous_sha256_prefix": "c3e45848",
+          "new_sha256_prefix": "4de20e99"
+        }
+      ],
+      "baseline_test_count": 135,
+      "recomputed": {
+        "path": "baseline_platform/artifacts/recomputed_validation_metrics_v2.json",
+        "runs": 84,
+        "sha256": "629e62cad6332b044bdfd529b15ea635c36799b9f880fea13619a696ec0bd66a"
+      },
+      "protocol_text_unchanged": true,
+      "note": "执行授权已于同日重新签署, 绑定成立; 本次改动不触及 train_pooling_experiment.py。"
+    }
+  ],
+  "amendment_completeness_note_2026_10_10": {
+    "finding": "本记录 amendments 中 2026-09-29 的条目不完整。该条目只重绑了 extended_metrics.py，并写明『本次改动不触及 train_pooling_experiment.py』，但当日同时被改动的两个绑定文件probe_pooling_branches.py（af57e756 -> 3ca8d413）与 probe_alpha_sensitivity.py（a9687919 -> da28bd0d）未被重绑，也未在该条目中出现。",
+    "why_not_rewritten": "该条目记录的是 2026-09-29 当时的判断，按本项目惯例不得追改，故以本注记形式加注。",
+    "verification": "2026-10-10 用现版 probe_pooling_branches.py 全量重跑 formal_gn_deepcrack537_unet_btsp_s2026，lower=0 四层读数 52.0 / 70.3 / 83.1 / 90.8% 与已记录数值逐位相同，故无已报告数值受影响。",
+    "disposition": "两文件按现状重绑入 preregistered_protocol_v0.5_freeze.json。"
+  }
+}

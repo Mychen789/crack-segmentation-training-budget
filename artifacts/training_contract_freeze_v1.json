@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "record_type": "train_validation_training_contract_freeze",
+  "status": "FROZEN_BEFORE_FORMAL_RESULTS",
+  "freeze_date": "2026-08-29",
+  "scope": "TRAIN_VALIDATION_ONLY",
+  "optimizer": {
+    "name": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001
+  },
+  "schedule": {
+    "name": "constant",
+    "warmup_epochs": 0
+  },
+  "epochs": 30,
+  "batching": {
+    "physical_batch_size": 1,
+    "gradient_accumulation_steps": 1,
+    "effective_batch_size": 1
+  },
+  "augmentation": {
+    "name": "none",
+    "operations": []
+  },
+  "loss": "binary_cross_entropy_with_logits_plus_soft_dice",
+  "checkpoint": {
+    "selection_metric": "validation_group_macro_foreground_iou",
+    "direction": "maximum",
+    "tie_break": "earliest_epoch"
+  },
+  "prediction_threshold": 0.5,
+  "amp": "enabled_when_cuda_is_available",
+  "workers": 0,
+  "rationale": [
+    "retain the already smoke-tested trainer defaults",
+    "avoid an additional hyperparameter-search stage",
+    "avoid photometric augmentation that could alter the preregistered low-CNR condition",
+    "keep paired method comparisons on the same deterministic data order"
+  ],
+  "formal_training_performed": false,
+  "validation_predictions_generated_under_this_contract": false,
+  "test_authorized": false,
+  "external_test_authorized": false
+}

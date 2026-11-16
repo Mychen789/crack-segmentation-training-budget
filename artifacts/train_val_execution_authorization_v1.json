@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0",
+  "record_type": "train_validation_execution_authorization",
+  "status": "TRAIN_VAL_EXECUTION_AUTHORIZED",
+  "authorization_date": "2026-09-09",
+  "authorized_by": "project owner",
+  "statement_verbatim": "今天起，基于这些冻结哈希，正式 train/val 可以开跑，test 保持锁定",
+  "scope": "TRAIN_VALIDATION_ONLY",
+  "allowed_splits": [
+    "train",
+    "val"
+  ],
+  "locked_splits": [
+    "test",
+    "external_test"
+  ],
+  "test_authorized": false,
+  "external_test_authorized": false,
+  "authorized_stages": [
+    "exploratory_validation",
+    "confirmatory_validation"
+  ],
+  "bound_artifacts": [
+    {
+      "path": "baseline_platform/tools/train_pooling_experiment.py",
+      "sha256": "4c09615bf3742baad4ea4717b680d5631352a0dad79018725aeac349482eb16b"
+    },
+    {
+      "path": "baseline_platform/artifacts/training_contract_freeze_v1.json",
+      "sha256": "9674b119b22dac0562fd2585d7d3a6d700d28528726b0b507466a14af0d21f8b"
+    },
+    {
+      "path": "baseline_platform/configs/crack500_train_val.json",
+      "sha256": "08b8e739f2fdf496c701eefe33a3cde0c9806d9ead7b75f1e83b059a91da1b65"
+    },
+    {
+      "path": "baseline_platform/tools/summarize_train_val_runs.py",
+      "sha256": "90cfbd8d066b5d02c231f7630fc108db83ae7df52d6484e693ef21edd4d66107"
+    },
+    {
+      "path": "baseline_platform/src/surface_crack/models.py",
+      "sha256": "c402e7c1092ee8b3230fa0db3f8646f8921503cb03aa516bab8210366c487cee"
+    },
+    {
+      "path": "baseline_platform/configs/deepcrack537_train_val.json",
+      "sha256": "00855c79a17db5687ecfe626e75801c45b879ce4199b35af7e2cbb9636e13337"
+    }
+  ],
+  "notes": [
+    "Covers both validation stages so that confirmatory runs need no second signing.",
+    "Does not unlock test or external_test; split_guard.py remains the code-level lock and this record carries no token that could open it.",
+    "AMP dtype is bfloat16 per phase1_protocol_audit/decision_log_2026-09-09_amp_dtype_bfloat16.md.",
+    "Runs produced before this date, including the 2026-09-08 float16 matrix archived under baseline_platform/runs/_pilot_fp16amp/, stay engineering-only and are not promoted retroactively.",
+    "2026-09-09: trainer re-hashed after adding --grad-clip (default 0 = measure only, no numerical effect) and per-epoch gradient-norm logging; no training-contract field changed.",
+    "2026-09-14: schedule deviates to a five-epoch linear LR warmup; see phase1_protocol_audit/decision_log_2026-09-14_lr_warmup_schedule_deviation.md. The 2026-09-09/10 matrix is superseded and archived under baseline_platform/runs_archive_v1_nowarmup/.",
+    "2026-09-15: checkpoint selection and reporting move to a trailing five-epoch mean; see phase1_protocol_audit/decision_log_2026-09-15_ma5_checkpoint_selection.md.",
+    "2026-09-15: GroupNorm added to models.py behind --norm (default none, no numerical effect on earlier runs) and adopted for the next matrix; see phase1_protocol_audit/decision_log_2026-09-15_groupnorm_stabilisation.md. The implementation freeze hash for models.py is superseded there; models.py is bound here from this date. The v2 matrix is superseded.",
+    "2026-09-18: the second core dataset DeepCrack537 is added to the bound artifacts, for the out-of-sample confirmation set out in phase1_protocol_audit/P2_MAIN_LINE_B_CLAIM_EVIDENCE_2026-09-17.md. Reason for the amendment: the original signing statement reads 'based on these frozen hashes', and that list named only the CRACK500 config, so running a second dataset under it would have exceeded what was actually signed. This closes a gap between two records rather than widening scope: configs/formal_train_val_plan_v1.json has carried this config as dataset_role core_secondary with the identical sha256 since it was written, and the protocol has named DeepCrack537 a core dataset throughout. Scope is unchanged: its config declares splits train and val only; test and external_test stay locked and this record still carries no token that could open them. The five artifacts bound on 2026-09-09 and 2026-09-15 were re-hashed on this date and are byte-identical, so no earlier result is affected. Authorised by the project owner on 2026-09-18.",
+    "2026-09-21: tools/train_pooling_experiment.py is re-bound after two names were appended to its POOLING_CHOICES tuple, adding the arms upper_tail_capacity_matched and diag_partition_matched. Reason: the frozen H1 control MatchedUpperTailPool2d matches the parameter count of static BTSP but registers a scalar whose gradient is analytically zero, so it degenerates to avg_top2 and the H1 contrast varies the lower-tail input together with the presence of a usable fusion degree of freedom. The two added arms match BTSP at 7765989 parameters with live fusion gradients. No training logic, contract field, schedule, metric, split behaviour or existing operator was changed, and the twelve existing choices keep their positions and spellings; src/surface_crack/research_pooling.py was edited by addition only and is covered by implementation_freeze_v2.json. Scope is unchanged: train and val only, test and external_test stay locked and this record still carries no token that could open them. The added arms are post-hoc strengthening arms serving main line B; the H1 outcome recorded on 2026-09-17 stands as not supported and neither arm may be used to restate it as supported. The other five bound artifacts were re-hashed on this date and are byte-identical, so no earlier result is affected. Authorised by the project owner on 2026-09-21.",
+    "2026-09-29: tools/train_pooling_experiment.py is re-bound after the second backbone gained a normalisation switch. Reason: PoolAdapterResNet18UNet hard-coded BatchNorm at all 29 sites while the effective batch size is 1, so it behaved as InstanceNorm during training and leaned on running statistics estimated from single images at evaluation, whereas the main backbone has run GroupNorm since 2026-09-15; the two were therefore not comparable in either phase, and the guard that rejected --norm for this backbone hid that rather than preventing it. The edit adds two names to POOLING_CHOICES, one value to --norm, and two guards that make each backbone refuse the other's setting; no training logic, contract field, schedule, metric or split behaviour was touched. src/surface_crack/resnet_unet.py was edited in the same change and is covered by preregistered_protocol_v0.4_freeze.json. Scope is unchanged: train and val only, test and external_test stay locked and this record still carries no token that could open them. See phase1_protocol_audit/decision_log_2026-09-25_second_backbone_normalisation.md. Authorised by the project owner on 2026-09-29."
+  ],
+  "amendments": [
+    {
+      "date": "2026-09-21",
+      "authorized_by": "project owner",
+      "statement_verbatim": "做吧",
+      "statement_context": "回应本次会话中关于 H1 对照容量不匹配的报告与修复方案，该报告明确指出训练入口哈希已变、执行授权绑定不成立、需负责人重新签署后方可训练。",
+      "scope_unchanged": true,
+      "test_authorized": false,
+      "external_test_authorized": false,
+      "decision_log": {
+        "path": "phase1_protocol_audit/decision_log_2026-09-21_h1_control_capacity_match.md",
+        "sha256": "36eddce2724427bbe7220c567cf622b1f5909e4794c0cb8d28092b757e3b343e"
+      },
+      "implementation_freeze": {
+        "path": "baseline_platform/artifacts/implementation_freeze_v2.json",
+        "sha256": "f5b930f8d1108538ff941b95ca6e690fe07748c786ce91836952164c875f0226"
+      },
+      "rebound_artifacts": [
+        {
+          "path": "baseline_platform/tools/train_pooling_experiment.py",
+          "previous_sha256_prefix": "32b840c5",
+          "new_sha256_prefix": "a6ac343b"
+        }
+      ],
+      "added_arms": [
+        "upper_tail_capacity_matched",
+        "diag_partition_matched"
+      ]
+    },
+    {
+      "date": "2026-09-29",
+      "authorized_by": "project owner",
+      "statement_verbatim": "可以先按照你的顺序来，署执行授权也可以签署",
+      "statement_context": "回应 2026-09-29 的状态核实报告，该报告指出执行授权对 train_pooling_experiment.py 的绑定因 2026-09-25 接通第二骨干归一化而失效，任何正式训练都不能跑，并列出签署后可做的三件事及建议顺序。",
+      "scope_unchanged": true,
+      "test_authorized": false,
+      "external_test_authorized": false,
+      "decision_log": {
+        "path": "phase1_protocol_audit/decision_log_2026-09-25_second_backbone_normalisation.md",
+        "sha256": "c4804135a2d3f9bc0f8beeb7df383db628870eb5b86d0290af0e0e0acb56ecc7"
+      },
+      "rebound_artifacts": [
+        {
+          "path": "baseline_platform/tools/train_pooling_experiment.py",
+          "previous_sha256_prefix": "a6ac343b",
+          "new_sha256_prefix": "4c09615b"
+        }
+      ],
+      "enables": [
+        "第二骨干 pool_adapter_resnet18_unet 在 --norm group 或 --norm batch 下的 train/val 运行"
+      ]
+    }
+  ]
+}

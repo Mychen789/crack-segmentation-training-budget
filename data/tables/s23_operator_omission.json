@@ -1,0 +1,2553 @@
+{
+  "analysis_id": "S23_operator_omission",
+  "analysis_type": "post hoc descriptive sensitivity conditional on observed validation runs",
+  "definition": "S23: post hoc, descriptive leave-one-operator-out sensitivity analysis.\n\nANALYSIS DEFINITION (fixed in this script before generation, 2026-11-12):\nUse only existing train/validation records. Never load test data or checkpoints.\nFor each of the four main settings, compute a run's read-out as the maximum\ncomplete trailing five-epoch average of foreground validation IoU within the\nbudget. Use budgets (30, 90) for DeepCrack537 and (15, 30) for CRACK500. Average\nthe three seed read-outs for each operator before subtracting low from high.\nFor cosine schedules, use the separately trained 30- and 90-epoch runs.\nFor ConvNeXt-UNet, truncate the existing 90-epoch runs at 30 and 90 epochs.\n\nFor all 11 distinct operators, and then after omitting each operator in turn,\nreport the strict count |gain(a)-gain(b)| > 0.005 over all unordered remaining\npairs, denominator, Fcross, maximum absolute shift Mmax, and gain mean/range.\nAlso repeat the strongest main setting separately for each observed seed.\nDo not refit rules, select thresholds, resample data, or perform hypothesis tests.\nThese are descriptive sensitivities conditional on the observed runs, seeds,\nsettings and operator set. They are neither new confirmatory results nor\npopulation-inference confidence intervals.\n\nIndependent implementation: standard-library CSV reader and explicit five-value\nmeans, without importing existing plotting or analysis code. Main-setting full\nresults are checked against data/tables/table3_budget_sensitivity.csv. Per-\noperator gains are also checked against table5_lift_decomposition.csv.\n",
+  "threshold": 0.005,
+  "seeds": [
+    2026,
+    2027,
+    2028
+  ],
+  "operators": [
+    "max",
+    "avg",
+    "min",
+    "avg_top2",
+    "fixed_max_avg",
+    "learned_max_avg",
+    "t_max_avg",
+    "v0_max_mean_min",
+    "btsp",
+    "diag_partition_matched",
+    "stride_conv"
+  ],
+  "script_sha256": "961d8abfa48e5b938ec025f9a3e912b7e44039fff0d9c5cf25a048f40eaf729a",
+  "input_files": [
+    {
+      "path": "data/per_epoch_validation.csv",
+      "sha256": "a755eaed5e9ca98e6103b753b4e86505429d26b7780ac4b018efd46f763411fc"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_max_s2026.json",
+      "sha256": "a5d515c8303a0daa5f2b3db0d8a06771bd7626d440521e902eba2804062901b5"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_max_s2026.json",
+      "sha256": "05d76f4b7b6f6ee39fb63b634ea5f6f32282e81bd86f8522c25d4d9d96db5b56"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_max_s2027.json",
+      "sha256": "18490b4b3615cd84c3dfad745bcbccf48e4472bc16868fa13538959200c46160"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_max_s2027.json",
+      "sha256": "fc6b1956cbd0cc1b8099db996c7432a7327a905b196a62d34f13cff3f2d8fe49"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_max_s2028.json",
+      "sha256": "ebfe76f131570ee18a815122b7368f01cf472833ce4c73eb265667526725f896"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_max_s2028.json",
+      "sha256": "a5362904151e95618d44a1dc5cebda92da9f6c8ed1d7c3cad34a43a4014c8752"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_avg_s2026.json",
+      "sha256": "413beb575448990d46f553dda8d1a1c4fe5450e0b4c299eb218bd881340cec2a"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_avg_s2026.json",
+      "sha256": "48e50eb3d8fe34fcf8efa312b8aeca0455ded06eb640447906840817c8998601"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_avg_s2027.json",
+      "sha256": "3268201d270275d07211860d94b24632d383c4d51490b2e745e7f94c0a49578d"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_avg_s2027.json",
+      "sha256": "85435d88a0956230d74fa03ff28cca66099efa48832e070856d67be565c8e54b"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_avg_s2028.json",
+      "sha256": "abe7cc130a38bab75157796b6824110d67ef03531f42efafc913c56926ea2d61"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_avg_s2028.json",
+      "sha256": "2105272c3ecd19aa8b16ecdfc7fca19c4f65f06e8b9969a75011c333279ea6c0"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_min_s2026.json",
+      "sha256": "4b90e1a034d2f79b4c46cc3b5fa0f87b0d8434e34c906d778fd95f079e85274c"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_min_s2026.json",
+      "sha256": "0731f5d91143a773aaeb26cd635d8d97c3180e2059f3302b4207c3c786a2ea95"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_min_s2027.json",
+      "sha256": "a91209c99e023391df3eee7877369c7d9cc92d2ca59bdef0981d9f04c78d39f5"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_min_s2027.json",
+      "sha256": "7ff9c6d551d615b69a4570dbac459ebf3021ee1abe05e569ad82dee12a4f0810"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_min_s2028.json",
+      "sha256": "689997929d41889a944a9690cedf778a51e7b4d479d76a8787e7d033c777f33b"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_min_s2028.json",
+      "sha256": "542e95dd681a070c1d9adb08257cad6679f339edd41c681637a33f90fb51d571"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_avg_top2_s2026.json",
+      "sha256": "8148b8f2358bbad5b50140af8e6ad606c35a56234811dfb6ec18a7643fe8fdae"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_avg_top2_s2026.json",
+      "sha256": "126b9193050e7b8b2d450b65a81de6cfbcb78de21058260548616b44468d0619"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_avg_top2_s2027.json",
+      "sha256": "82a6ef56fcbe4c8ae0cfda69e1816190543cfc4360cce5f2d28f99aa210586d7"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_avg_top2_s2027.json",
+      "sha256": "be684f9a876be6b8dfe4d71938afe5be68aa9fa0d9a9d35d74e6dfa22be13f7f"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_avg_top2_s2028.json",
+      "sha256": "a1cae9a17ea9eff77f791195434a80a2cea2c31617ea1977755e9ffc316a75d2"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_avg_top2_s2028.json",
+      "sha256": "1ea537be67f031aba1b4caf98b8338559538df8a779407804b88a2a4bb9c3966"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_fixed_max_avg_s2026.json",
+      "sha256": "c8f330ba7cfa784c9982cbc6f663b7f39ea9b63c807a687e6d3711344340392f"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_fixed_max_avg_s2026.json",
+      "sha256": "b197c443ea7d200b44b6151c51db8c751fdbb9badd81bcaa9d725d79ad13bdf1"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_fixed_max_avg_s2027.json",
+      "sha256": "6643e85521f5a4e57ff709b0f8755ad7a87153d5500e84846a3303b2e56dd260"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_fixed_max_avg_s2027.json",
+      "sha256": "9bdd6bde6d23ed388596702d2342e3fcc0a8798cf01558cdd54b3e68815c18d5"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_fixed_max_avg_s2028.json",
+      "sha256": "7961100a73c33cde0426a6e2f0037e27be1c04c801f05c400fd8663ff1f94234"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_fixed_max_avg_s2028.json",
+      "sha256": "35587f2d7fe2c11fa6351d0cf3553e9a4ad0e4c9c42478a879e7f2e5b88ee9e6"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_learned_max_avg_s2026.json",
+      "sha256": "002720faa8afc3665249a4686dad5a9436a8d3731b14910e1178fcdb08be26ce"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_learned_max_avg_s2026.json",
+      "sha256": "5dcdd7878a76f51f557d31e44528dacfef9ee3511a30f7bc864bf96390a7ae3b"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_learned_max_avg_s2027.json",
+      "sha256": "fea78cff2e89b98299e391a9a36e6b0c479d7310a1f57c1d79899ea47f124175"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_learned_max_avg_s2027.json",
+      "sha256": "11c4cbcc71c2a780f56cd0de7bde5ad5f7ae3d01dbba962ea82b63d022cd25bd"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_learned_max_avg_s2028.json",
+      "sha256": "d1d59937e0f932a6b29ec77c70977bfe0f5075ea1ae1744ae7b5dfceea873d4e"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_learned_max_avg_s2028.json",
+      "sha256": "8911ad5b88b5b8ed1a138a9238212af05a7417f844ce57a09d9b6c53926952ca"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_t_max_avg_s2026.json",
+      "sha256": "d35c131607eb5d92fb237e93ecf5a7ee56b99c4efaaa54b23d7207dee1773b56"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_t_max_avg_s2026.json",
+      "sha256": "f894c6ef042be64130f337518b322fbe07130e7d9d5054b0df24797ced0d47f1"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_t_max_avg_s2027.json",
+      "sha256": "92c7418cddefdbac2039adc092a35de8d92434fbcd9e66e76a43424862d835fa"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_t_max_avg_s2027.json",
+      "sha256": "36b6a2b8a077ad5e6b49b83749144b2427f26b5ccc926b1eb0101f5716268d98"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_t_max_avg_s2028.json",
+      "sha256": "5bb7019257c85986a81531c78859292026b045346d9950c193f03728aacc0a39"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_t_max_avg_s2028.json",
+      "sha256": "8aef34d4a3b24f67e2a1bd86440c5a6ff471b56915c31205ee9e282711d04755"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_v0_max_mean_min_s2026.json",
+      "sha256": "564bfe40d205fa5d4eabc555bd2dc3f29b570ff830070a4887f24eed09b6934b"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_v0_max_mean_min_s2026.json",
+      "sha256": "aa8509566eb4052a13feb858bd986d1be80622ff461b30215856a7e4316bee86"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_v0_max_mean_min_s2027.json",
+      "sha256": "26dc4e947f960e51baffc1210b3f60e2497362bdd842881766e867988f681f10"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_v0_max_mean_min_s2027.json",
+      "sha256": "38b50f5a446b164e79285b46a512cf459ec1691517e735ed72f583ed9218307b"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_v0_max_mean_min_s2028.json",
+      "sha256": "bc869dfd1bd55a078a75987bd1d503b5190147a69abbc855f4fcf655586fbb78"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_v0_max_mean_min_s2028.json",
+      "sha256": "632907cf29b5256ae95e802ec80be8500f4f03f721956b04fcfddc5a75a15540"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_btsp_s2026.json",
+      "sha256": "94da550482fb63ef90efca2b1bc03f6502ff51d2eb572a4cd365d730048889e9"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_btsp_s2026.json",
+      "sha256": "daa0ccec8978490aab124b354ebc3a5447bca62ba7ba14ed19d9745ad2aed440"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_btsp_s2027.json",
+      "sha256": "9cbc2a13c8e988cc74fe3e7580980bbfd61817d4c6e1c7f51c88ef7370913362"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_btsp_s2027.json",
+      "sha256": "f4de4c2c039c64d9e14d1200f4a2a2489ced7115f4e13b2fb3e4ae71f3e4d4c5"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_btsp_s2028.json",
+      "sha256": "1041880f53aed5d0aa2e319e73a763c26d524a39d4573c919a5abf7d83129a1c"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_btsp_s2028.json",
+      "sha256": "9b6376fe88e5742001758f7686e45b37fded0b9779b49e0494e278847088b025"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_diag_partition_matched_s2026.json",
+      "sha256": "e4b931111f158b337a4852255025ee644dfee104760918e773c85f77f36c87a2"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_diag_partition_matched_s2026.json",
+      "sha256": "a64373b76e4c8a8844252989c945d821cd8fe685de4abe2a7584d0ab2a0d57d8"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_diag_partition_matched_s2027.json",
+      "sha256": "b4e55e1c5c3eaeee5652406263cc4b9d4e2658f43227bbfcb6e9d38c262c1575"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_diag_partition_matched_s2027.json",
+      "sha256": "1faef4d7054cf4209ea0061e95e191858393f59611297b6e51289f226249a9ae"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_diag_partition_matched_s2028.json",
+      "sha256": "059c7aaca4317a125834a20f2639d8221746e4c8aab250d0cb0edd2b7aad3528"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_diag_partition_matched_s2028.json",
+      "sha256": "09322af21df603cc06ad34bab3af121953db9ce1bbf49d8a2ee2a317729369a8"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_stride_conv_s2026.json",
+      "sha256": "c1a2b5fe7057e73d70e8285ce51f5eec995521d81417da7485d1f7dd77592f17"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_stride_conv_s2026.json",
+      "sha256": "03a2976940716e71e01b6fbb0c63b28b6b154d43b6383c8634338dc741f92f0a"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_stride_conv_s2027.json",
+      "sha256": "c858d9263db69ebb1c2da1bc2d14232b49f98e9f6f1eb3a6bc1ddad4b4aefe33"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_stride_conv_s2027.json",
+      "sha256": "39786f0b8fcb5a7ed2e18e225c3f651035d46c41ec2375c754aff9786362d322"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos30_unet_gr_deepcrack537_stride_conv_s2028.json",
+      "sha256": "c77933cef9dde8d9243f9b5c1fe4c496f18b7e550327039e403b56c064f75c57"
+    },
+    {
+      "path": "data/runs-cosine/s21_collect/cos90_unet_gr_deepcrack537_stride_conv_s2028.json",
+      "sha256": "620c3bb2dfa0d514c9bf8c7aaaa907f9fb423be4c3a1538ff5fac4097d01317b"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_max_s2026.json",
+      "sha256": "d8137eab42d850a29ee330e08a2bfbfca26c87ad29b9cbc4f453089abcd7526a"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_max_s2027.json",
+      "sha256": "5b9a6b7d07dcad11a4b0794422d35c4567c06c83d869cf3fc94ab9ff037285c3"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_max_s2028.json",
+      "sha256": "b920c6e2c7167b6e8ae2522ceb6e35e7645da0c0e2a0a1cd2c9a647d89d7eaac"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_avg_s2026.json",
+      "sha256": "ac93e130c055ca45e9b0c9c4ae2d130f6cf722f5f9f462739b0192f261615240"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_avg_s2027.json",
+      "sha256": "9a1727928611be4397c3cbd5002076daac2614537293aa2e70aa2cdad6f8f426"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_avg_s2028.json",
+      "sha256": "18435d62214aa802987b777b600fcb2033646432fc8e945103b2ec14e218012f"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_min_s2026.json",
+      "sha256": "149e28a8a28546d51e1e859ee49e6e36b829de2dc793f778f6c1e8584adcb5d2"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_min_s2027.json",
+      "sha256": "5b09bb501712f5429a68061432425b58128ba22cdde6ce870fdccfdcfb67210b"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_min_s2028.json",
+      "sha256": "e3e9ff6cb10fe60c4e5bb8cc3db570daeb879f2fda2c9b9f84eda4643fff0da3"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_avg_top2_s2026.json",
+      "sha256": "12651924b5e452267cbb343471ba236f76d6b753cb10293b01760e5a5100ad8a"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_avg_top2_s2027.json",
+      "sha256": "2cf3fe019dc9793e18cccba6d0fbb4a693763a922582432acd8b0d2ec573859a"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_avg_top2_s2028.json",
+      "sha256": "17711123ca5f527df9167f0a870615f2926ee6aeceb9ebf6eba5e3da25e4177b"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_fixed_max_avg_s2026.json",
+      "sha256": "8e0a7c8c4ecfd759c960584bfb9258180c1ace69406a53fe1bd4fe9d7889f08a"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_fixed_max_avg_s2027.json",
+      "sha256": "9cc3747332c90ee0014182c26100dc7fa53f3d1b68d7db3a5f78a985dbf11dca"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_fixed_max_avg_s2028.json",
+      "sha256": "93965c8ab926c2ab553e3bc6426c636d6a758657b618089e80fb7bdf298858a6"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_learned_max_avg_s2026.json",
+      "sha256": "589a50f64c81fcf5927729099a78183900937770cab5937f46205e118e970aaf"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_learned_max_avg_s2027.json",
+      "sha256": "926c6e3ecd5c027f353bc0fccca7646925a63534400da7e0a544be59629cd0ea"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_learned_max_avg_s2028.json",
+      "sha256": "f760ba21d4d8c66b4aa8b1373fcc6290e17df2c9982474610c83cda5e93fd111"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_t_max_avg_s2026.json",
+      "sha256": "764c95283dbe5fabf865eebcfe4b3e936cd0a18ccf47f37b2a6d59ad0f6e7ea0"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_t_max_avg_s2027.json",
+      "sha256": "f0eb70e491a0aecd4cbc873250ce05ba8227cd82d296511ba72f45867b988be1"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_t_max_avg_s2028.json",
+      "sha256": "afeadbe78956d4054ff6007ce287d9d73b5227b01606bf99968a94e618681754"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_v0_max_mean_min_s2026.json",
+      "sha256": "a64554eabf69b0d0061821bc9e44af65bcdf1d4c255b8ca123d98c2fbab73aeb"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_v0_max_mean_min_s2027.json",
+      "sha256": "de720a43bcf4b7cd02651cdc35e23727f2060995d9c2001cc28b56cf493b952d"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_v0_max_mean_min_s2028.json",
+      "sha256": "6107c98b579c412e140b3b8050110b698e3d9736b2a77dc38810553f9ee810a5"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_btsp_s2026.json",
+      "sha256": "8644ad04eca7a14c88e20902526cd3db94405a965fe780fd247b5d4124585068"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_btsp_s2027.json",
+      "sha256": "b56e740d331ad977dfc552caa427036b9fbe9d4e2b0c8f740527dc937d9fde6b"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_btsp_s2028.json",
+      "sha256": "d893732b50b40d913095341be3e73ff8f82d43a4293d2f8c36e32b08e3491c0d"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_diag_partition_matched_s2026.json",
+      "sha256": "5fb0167d8899675ddbf1c6c0d97b6ab47ff0c89e9fb949432af69f7a9f9033a5"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_diag_partition_matched_s2027.json",
+      "sha256": "79fa284778fdd9d08bcb01795da886e8dff6201066190d65b687b5508bf6abe3"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_diag_partition_matched_s2028.json",
+      "sha256": "8c76f1d227c5907931bc2b8ee61dd42ad3f4a85c9f6273819d33a606cb8ba6c6"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_stride_conv_s2026.json",
+      "sha256": "d9855becd617b7c042d80511dc05853068ee2eefa1446b7ceda5fc70f6544e63"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_stride_conv_s2027.json",
+      "sha256": "c7636e2c8e25098604338cedd84ad3bc94dac6a77b188cb0d78821391e38451b"
+    },
+    {
+      "path": "data/runs_s22/b90_cnx_gr_deepcrack537_stride_conv_s2028.json",
+      "sha256": "5d7378a21f1839cf7de4e32a4626ddea86a7554929ed46e3730dfc2689713598"
+    },
+    {
+      "path": "data/tables/table3_budget_sensitivity.csv",
+      "sha256": "1c2f2063c4a9c9928c529814508d5018a0d1c3c616e5f8c41269cdb610b5c9e8"
+    },
+    {
+      "path": "data/tables/table5_lift_decomposition.csv",
+      "sha256": "46df07f331382bd8553f84f943dc5e696b3039cb3e7d67fa18342ac3fd30bdaf"
+    }
+  ],
+  "reference_checks": [
+    {
+      "setting": "unet_deepcrack537_90",
+      "reference": "data/tables/table3_budget_sensitivity.csv",
+      "status": "matched"
+    },
+    {
+      "setting": "rn18_deepcrack537_90",
+      "reference": "data/tables/table3_budget_sensitivity.csv",
+      "status": "matched"
+    },
+    {
+      "setting": "unet_crack500_30",
+      "reference": "data/tables/table3_budget_sensitivity.csv",
+      "status": "matched"
+    },
+    {
+      "setting": "rn18_crack500_30",
+      "reference": "data/tables/table3_budget_sensitivity.csv",
+      "status": "matched"
+    }
+  ],
+  "summaries": [
+    {
+      "setting": "unet_deepcrack537_90",
+      "full": {
+        "setting": "unet_deepcrack537_90",
+        "seed_scope": "mean_3",
+        "budget_low": 30,
+        "budget_high": 90,
+        "omitted_operator": "none",
+        "n_operators": 11,
+        "n_pairs": 55,
+        "n_cross": 25,
+        "Fcross": 0.45454545454545453,
+        "Mmax": 0.018933148520022258,
+        "gain_mean": 0.01980937959596724,
+        "gain_min": 0.013296194792774996,
+        "gain_max": 0.032229343312797254,
+        "gain_range": 0.018933148520022258
+      },
+      "without_min": {
+        "setting": "unet_deepcrack537_90",
+        "seed_scope": "mean_3",
+        "budget_low": 30,
+        "budget_high": 90,
+        "omitted_operator": "min",
+        "n_operators": 10,
+        "n_pairs": 45,
+        "n_cross": 15,
+        "Fcross": 0.3333333333333333,
+        "Mmax": 0.012444742212091242,
+        "gain_mean": 0.01856738322428424,
+        "gain_min": 0.013296194792774996,
+        "gain_max": 0.025740937004866238,
+        "gain_range": 0.012444742212091242
+      },
+      "leave_one_out_n_cross_range": [
+        15,
+        23
+      ],
+      "leave_one_out_Fcross_range": [
+        0.3333333333333333,
+        0.5111111111111111
+      ],
+      "leave_one_out_Mmax_range": [
+        0.012444742212091242,
+        0.018933148520022258
+      ]
+    },
+    {
+      "setting": "rn18_deepcrack537_90",
+      "full": {
+        "setting": "rn18_deepcrack537_90",
+        "seed_scope": "mean_3",
+        "budget_low": 30,
+        "budget_high": 90,
+        "omitted_operator": "none",
+        "n_operators": 11,
+        "n_pairs": 55,
+        "n_cross": 4,
+        "Fcross": 0.07272727272727272,
+        "Mmax": 0.006445250923046042,
+        "gain_mean": 0.01974944770612177,
+        "gain_min": 0.017176843360690253,
+        "gain_max": 0.023622094283736295,
+        "gain_range": 0.006445250923046042
+      },
+      "without_min": {
+        "setting": "rn18_deepcrack537_90",
+        "seed_scope": "mean_3",
+        "budget_low": 30,
+        "budget_high": 90,
+        "omitted_operator": "min",
+        "n_operators": 10,
+        "n_pairs": 45,
+        "n_cross": 3,
+        "Fcross": 0.06666666666666667,
+        "Mmax": 0.006314470793299942,
+        "gain_mean": 0.02000670814066492,
+        "gain_min": 0.017307623490436352,
+        "gain_max": 0.023622094283736295,
+        "gain_range": 0.006314470793299942
+      },
+      "leave_one_out_n_cross_range": [
+        0,
+        4
+      ],
+      "leave_one_out_Fcross_range": [
+        0.0,
+        0.08888888888888889
+      ],
+      "leave_one_out_Mmax_range": [
+        0.004872192119132368,
+        0.006445250923046042
+      ]
+    },
+    {
+      "setting": "unet_crack500_30",
+      "full": {
+        "setting": "unet_crack500_30",
+        "seed_scope": "mean_3",
+        "budget_low": 15,
+        "budget_high": 30,
+        "omitted_operator": "none",
+        "n_operators": 11,
+        "n_pairs": 55,
+        "n_cross": 2,
+        "Fcross": 0.03636363636363636,
+        "Mmax": 0.005245977048612072,
+        "gain_mean": 0.006599715396499991,
+        "gain_min": 0.003440261670403233,
+        "gain_max": 0.008686238719015305,
+        "gain_range": 0.005245977048612072
+      },
+      "without_min": {
+        "setting": "unet_crack500_30",
+        "seed_scope": "mean_3",
+        "budget_low": 15,
+        "budget_high": 30,
+        "omitted_operator": "min",
+        "n_operators": 10,
+        "n_pairs": 45,
+        "n_cross": 2,
+        "Fcross": 0.044444444444444446,
+        "Mmax": 0.005245977048612072,
+        "gain_mean": 0.006526600659009174,
+        "gain_min": 0.003440261670403233,
+        "gain_max": 0.008686238719015305,
+        "gain_range": 0.005245977048612072
+      },
+      "leave_one_out_n_cross_range": [
+        0,
+        2
+      ],
+      "leave_one_out_Fcross_range": [
+        0.0,
+        0.044444444444444446
+      ],
+      "leave_one_out_Mmax_range": [
+        0.0033465650772914746,
+        0.005245977048612072
+      ]
+    },
+    {
+      "setting": "rn18_crack500_30",
+      "full": {
+        "setting": "rn18_crack500_30",
+        "seed_scope": "mean_3",
+        "budget_low": 15,
+        "budget_high": 30,
+        "omitted_operator": "none",
+        "n_operators": 11,
+        "n_pairs": 55,
+        "n_cross": 0,
+        "Fcross": 0.0,
+        "Mmax": 0.004707385915646123,
+        "gain_mean": 0.007896298977162153,
+        "gain_min": 0.0045316674399978885,
+        "gain_max": 0.009239053355644011,
+        "gain_range": 0.004707385915646123
+      },
+      "without_min": {
+        "setting": "rn18_crack500_30",
+        "seed_scope": "mean_3",
+        "budget_low": 15,
+        "budget_high": 30,
+        "omitted_operator": "min",
+        "n_operators": 10,
+        "n_pairs": 45,
+        "n_cross": 0,
+        "Fcross": 0.0,
+        "Mmax": 0.004707385915646123,
+        "gain_mean": 0.007801571271999164,
+        "gain_min": 0.0045316674399978885,
+        "gain_max": 0.009239053355644011,
+        "gain_range": 0.004707385915646123
+      },
+      "leave_one_out_n_cross_range": [
+        0,
+        0
+      ],
+      "leave_one_out_Fcross_range": [
+        0.0,
+        0.0
+      ],
+      "leave_one_out_Mmax_range": [
+        0.002235773223196569,
+        0.004707385915646123
+      ]
+    },
+    {
+      "setting": "unet_deepcrack537_cosine",
+      "full": {
+        "setting": "unet_deepcrack537_cosine",
+        "seed_scope": "mean_3",
+        "budget_low": 30,
+        "budget_high": 90,
+        "omitted_operator": "none",
+        "n_operators": 11,
+        "n_pairs": 55,
+        "n_cross": 27,
+        "Fcross": 0.4909090909090909,
+        "Mmax": 0.015968733220014686,
+        "gain_mean": 0.009264568534539285,
+        "gain_min": 0.0035547108426975393,
+        "gain_max": 0.019523444062712225,
+        "gain_range": 0.015968733220014686
+      },
+      "without_min": {
+        "setting": "unet_deepcrack537_cosine",
+        "seed_scope": "mean_3",
+        "budget_low": 30,
+        "budget_high": 90,
+        "omitted_operator": "min",
+        "n_operators": 10,
+        "n_pairs": 45,
+        "n_cross": 20,
+        "Fcross": 0.4444444444444444,
+        "Mmax": 0.015968733220014686,
+        "gain_mean": 0.008677562862480837,
+        "gain_min": 0.0035547108426975393,
+        "gain_max": 0.019523444062712225,
+        "gain_range": 0.015968733220014686
+      },
+      "leave_one_out_n_cross_range": [
+        18,
+        24
+      ],
+      "leave_one_out_Fcross_range": [
+        0.4,
+        0.5333333333333333
+      ],
+      "leave_one_out_Mmax_range": [
+        0.011579914412426229,
+        0.015968733220014686
+      ]
+    },
+    {
+      "setting": "cnx_deepcrack537_90",
+      "full": {
+        "setting": "cnx_deepcrack537_90",
+        "seed_scope": "mean_3",
+        "budget_low": 30,
+        "budget_high": 90,
+        "omitted_operator": "none",
+        "n_operators": 11,
+        "n_pairs": 55,
+        "n_cross": 2,
+        "Fcross": 0.03636363636363636,
+        "Mmax": 0.005659137154493288,
+        "gain_mean": 0.011795526237089874,
+        "gain_min": 0.009319835151141875,
+        "gain_max": 0.014978972305635163,
+        "gain_range": 0.005659137154493288
+      },
+      "without_min": {
+        "setting": "cnx_deepcrack537_90",
+        "seed_scope": "mean_3",
+        "budget_low": 30,
+        "budget_high": 90,
+        "omitted_operator": "min",
+        "n_operators": 10,
+        "n_pairs": 45,
+        "n_cross": 2,
+        "Fcross": 0.044444444444444446,
+        "Mmax": 0.005659137154493288,
+        "gain_mean": 0.011757985585449725,
+        "gain_min": 0.009319835151141875,
+        "gain_max": 0.014978972305635163,
+        "gain_range": 0.005659137154493288
+      },
+      "leave_one_out_n_cross_range": [
+        0,
+        2
+      ],
+      "leave_one_out_Fcross_range": [
+        0.0,
+        0.044444444444444446
+      ],
+      "leave_one_out_Mmax_range": [
+        0.0033740684667218357,
+        0.005659137154493288
+      ]
+    }
+  ],
+  "mean_three_seed_results": [
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "none",
+      "n_operators": 11,
+      "n_pairs": 55,
+      "n_cross": 25,
+      "Fcross": 0.45454545454545453,
+      "Mmax": 0.018933148520022258,
+      "gain_mean": 0.01980937959596724,
+      "gain_min": 0.013296194792774996,
+      "gain_max": 0.032229343312797254,
+      "gain_range": 0.018933148520022258
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "max",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 22,
+      "Fcross": 0.4888888888888889,
+      "Mmax": 0.018933148520022258,
+      "gain_mean": 0.020174753822407788,
+      "gain_min": 0.013296194792774996,
+      "gain_max": 0.032229343312797254,
+      "gain_range": 0.018933148520022258
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 22,
+      "Fcross": 0.4888888888888889,
+      "Mmax": 0.018933148520022258,
+      "gain_mean": 0.01978682285404204,
+      "gain_min": 0.013296194792774996,
+      "gain_max": 0.032229343312797254,
+      "gain_range": 0.018933148520022258
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "min",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 15,
+      "Fcross": 0.3333333333333333,
+      "Mmax": 0.012444742212091242,
+      "gain_mean": 0.01856738322428424,
+      "gain_min": 0.013296194792774996,
+      "gain_max": 0.025740937004866238,
+      "gain_range": 0.012444742212091242
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "avg_top2",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 22,
+      "Fcross": 0.4888888888888889,
+      "Mmax": 0.018933148520022258,
+      "gain_mean": 0.019928438681839855,
+      "gain_min": 0.013296194792774996,
+      "gain_max": 0.032229343312797254,
+      "gain_range": 0.018933148520022258
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "fixed_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 22,
+      "Fcross": 0.4888888888888889,
+      "Mmax": 0.018933148520022258,
+      "gain_mean": 0.020151001073123776,
+      "gain_min": 0.013296194792774996,
+      "gain_max": 0.032229343312797254,
+      "gain_range": 0.018933148520022258
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "learned_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 23,
+      "Fcross": 0.5111111111111111,
+      "Mmax": 0.018933148520022258,
+      "gain_mean": 0.020027014302267575,
+      "gain_min": 0.013296194792774996,
+      "gain_max": 0.032229343312797254,
+      "gain_range": 0.018933148520022258
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "t_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 22,
+      "Fcross": 0.4888888888888889,
+      "Mmax": 0.018933148520022258,
+      "gain_mean": 0.02014400542142878,
+      "gain_min": 0.013296194792774996,
+      "gain_max": 0.032229343312797254,
+      "gain_range": 0.018933148520022258
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "v0_max_mean_min",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 16,
+      "Fcross": 0.35555555555555557,
+      "Mmax": 0.018933148520022258,
+      "gain_mean": 0.01921622385507734,
+      "gain_min": 0.013296194792774996,
+      "gain_max": 0.032229343312797254,
+      "gain_range": 0.018933148520022258
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "btsp",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 22,
+      "Fcross": 0.4888888888888889,
+      "Mmax": 0.018933148520022258,
+      "gain_mean": 0.01991957740270961,
+      "gain_min": 0.013296194792774996,
+      "gain_max": 0.032229343312797254,
+      "gain_range": 0.018933148520022258
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "diag_partition_matched",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 20,
+      "Fcross": 0.4444444444444444,
+      "Mmax": 0.018933148520022258,
+      "gain_mean": 0.01952725684217218,
+      "gain_min": 0.013296194792774996,
+      "gain_max": 0.032229343312797254,
+      "gain_range": 0.018933148520022258
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "stride_conv",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 19,
+      "Fcross": 0.4222222222222222,
+      "Mmax": 0.016073705981235475,
+      "gain_mean": 0.020460698076286466,
+      "gain_min": 0.01615563733156178,
+      "gain_max": 0.032229343312797254,
+      "gain_range": 0.016073705981235475
+    },
+    {
+      "setting": "rn18_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "none",
+      "n_operators": 11,
+      "n_pairs": 55,
+      "n_cross": 4,
+      "Fcross": 0.07272727272727272,
+      "Mmax": 0.006445250923046042,
+      "gain_mean": 0.01974944770612177,
+      "gain_min": 0.017176843360690253,
+      "gain_max": 0.023622094283736295,
+      "gain_range": 0.006445250923046042
+    },
+    {
+      "setting": "rn18_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "max",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 4,
+      "Fcross": 0.08888888888888889,
+      "Mmax": 0.006445250923046042,
+      "gain_mean": 0.019579930497393806,
+      "gain_min": 0.017176843360690253,
+      "gain_max": 0.023622094283736295,
+      "gain_range": 0.006445250923046042
+    },
+    {
+      "setting": "rn18_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 4,
+      "Fcross": 0.08888888888888889,
+      "Mmax": 0.006445250923046042,
+      "gain_mean": 0.019676302966315173,
+      "gain_min": 0.017176843360690253,
+      "gain_max": 0.023622094283736295,
+      "gain_range": 0.006445250923046042
+    },
+    {
+      "setting": "rn18_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "min",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 3,
+      "Fcross": 0.06666666666666667,
+      "Mmax": 0.006314470793299942,
+      "gain_mean": 0.02000670814066492,
+      "gain_min": 0.017307623490436352,
+      "gain_max": 0.023622094283736295,
+      "gain_range": 0.006314470793299942
+    },
+    {
+      "setting": "rn18_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "avg_top2",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 4,
+      "Fcross": 0.08888888888888889,
+      "Mmax": 0.006445250923046042,
+      "gain_mean": 0.01966697970935133,
+      "gain_min": 0.017176843360690253,
+      "gain_max": 0.023622094283736295,
+      "gain_range": 0.006445250923046042
+    },
+    {
+      "setting": "rn18_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "fixed_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 4,
+      "Fcross": 0.08888888888888889,
+      "Mmax": 0.006445250923046042,
+      "gain_mean": 0.019722695066065877,
+      "gain_min": 0.017176843360690253,
+      "gain_max": 0.023622094283736295,
+      "gain_range": 0.006445250923046042
+    },
+    {
+      "setting": "rn18_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "learned_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 3,
+      "Fcross": 0.06666666666666667,
+      "Mmax": 0.006445250923046042,
+      "gain_mean": 0.019993630127690308,
+      "gain_min": 0.017176843360690253,
+      "gain_max": 0.023622094283736295,
+      "gain_range": 0.006445250923046042
+    },
+    {
+      "setting": "rn18_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "t_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 3,
+      "Fcross": 0.06666666666666667,
+      "Mmax": 0.006445250923046042,
+      "gain_mean": 0.019922479482938193,
+      "gain_min": 0.017176843360690253,
+      "gain_max": 0.023622094283736295,
+      "gain_range": 0.006445250923046042
+    },
+    {
+      "setting": "rn18_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "v0_max_mean_min",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 0,
+      "Fcross": 0.0,
+      "Mmax": 0.004872192119132368,
+      "gain_mean": 0.019362183048360314,
+      "gain_min": 0.017176843360690253,
+      "gain_max": 0.02204903547982262,
+      "gain_range": 0.004872192119132368
+    },
+    {
+      "setting": "rn18_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "btsp",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 4,
+      "Fcross": 0.08888888888888889,
+      "Mmax": 0.006445250923046042,
+      "gain_mean": 0.01951948892875168,
+      "gain_min": 0.017176843360690253,
+      "gain_max": 0.023622094283736295,
+      "gain_range": 0.006445250923046042
+    },
+    {
+      "setting": "rn18_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "diag_partition_matched",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 3,
+      "Fcross": 0.06666666666666667,
+      "Mmax": 0.006445250923046042,
+      "gain_mean": 0.01998248564516265,
+      "gain_min": 0.017176843360690253,
+      "gain_max": 0.023622094283736295,
+      "gain_range": 0.006445250923046042
+    },
+    {
+      "setting": "rn18_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "stride_conv",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 4,
+      "Fcross": 0.08888888888888889,
+      "Mmax": 0.006445250923046042,
+      "gain_mean": 0.019811041154645194,
+      "gain_min": 0.017176843360690253,
+      "gain_max": 0.023622094283736295,
+      "gain_range": 0.006445250923046042
+    },
+    {
+      "setting": "unet_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "none",
+      "n_operators": 11,
+      "n_pairs": 55,
+      "n_cross": 2,
+      "Fcross": 0.03636363636363636,
+      "Mmax": 0.005245977048612072,
+      "gain_mean": 0.006599715396499991,
+      "gain_min": 0.003440261670403233,
+      "gain_max": 0.008686238719015305,
+      "gain_range": 0.005245977048612072
+    },
+    {
+      "setting": "unet_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "max",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 2,
+      "Fcross": 0.044444444444444446,
+      "Mmax": 0.005245977048612072,
+      "gain_mean": 0.006714176026346263,
+      "gain_min": 0.003440261670403233,
+      "gain_max": 0.008686238719015305,
+      "gain_range": 0.005245977048612072
+    },
+    {
+      "setting": "unet_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 2,
+      "Fcross": 0.044444444444444446,
+      "Mmax": 0.005245977048612072,
+      "gain_mean": 0.006549505453691862,
+      "gain_min": 0.003440261670403233,
+      "gain_max": 0.008686238719015305,
+      "gain_range": 0.005245977048612072
+    },
+    {
+      "setting": "unet_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "min",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 2,
+      "Fcross": 0.044444444444444446,
+      "Mmax": 0.005245977048612072,
+      "gain_mean": 0.006526600659009174,
+      "gain_min": 0.003440261670403233,
+      "gain_max": 0.008686238719015305,
+      "gain_range": 0.005245977048612072
+    },
+    {
+      "setting": "unet_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "avg_top2",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 2,
+      "Fcross": 0.044444444444444446,
+      "Mmax": 0.005245977048612072,
+      "gain_mean": 0.006481963861247486,
+      "gain_min": 0.003440261670403233,
+      "gain_max": 0.008686238719015305,
+      "gain_range": 0.005245977048612072
+    },
+    {
+      "setting": "unet_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "fixed_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 1,
+      "Fcross": 0.022222222222222223,
+      "Mmax": 0.005245977048612072,
+      "gain_mean": 0.006395371571590325,
+      "gain_min": 0.003440261670403233,
+      "gain_max": 0.008686238719015305,
+      "gain_range": 0.005245977048612072
+    },
+    {
+      "setting": "unet_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "learned_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 1,
+      "Fcross": 0.022222222222222223,
+      "Mmax": 0.005202891975193413,
+      "gain_mean": 0.006391063064248459,
+      "gain_min": 0.003440261670403233,
+      "gain_max": 0.008643153645596646,
+      "gain_range": 0.005202891975193413
+    },
+    {
+      "setting": "unet_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "t_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 2,
+      "Fcross": 0.044444444444444446,
+      "Mmax": 0.005245977048612072,
+      "gain_mean": 0.006480833138340469,
+      "gain_min": 0.003440261670403233,
+      "gain_max": 0.008686238719015305,
+      "gain_range": 0.005245977048612072
+    },
+    {
+      "setting": "unet_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "v0_max_mean_min",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 2,
+      "Fcross": 0.044444444444444446,
+      "Mmax": 0.005245977048612072,
+      "gain_mean": 0.0067257195719776066,
+      "gain_min": 0.003440261670403233,
+      "gain_max": 0.008686238719015305,
+      "gain_range": 0.005245977048612072
+    },
+    {
+      "setting": "unet_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "btsp",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 2,
+      "Fcross": 0.044444444444444446,
+      "Mmax": 0.005245977048612072,
+      "gain_mean": 0.006720721602426127,
+      "gain_min": 0.003440261670403233,
+      "gain_max": 0.008686238719015305,
+      "gain_range": 0.005245977048612072
+    },
+    {
+      "setting": "unet_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "diag_partition_matched",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 0,
+      "Fcross": 0.0,
+      "Mmax": 0.0033465650772914746,
+      "gain_mean": 0.006915660769109666,
+      "gain_min": 0.00533967364172383,
+      "gain_max": 0.008686238719015305,
+      "gain_range": 0.0033465650772914746
+    },
+    {
+      "setting": "unet_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "stride_conv",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 2,
+      "Fcross": 0.044444444444444446,
+      "Mmax": 0.005245977048612072,
+      "gain_mean": 0.006695253643512455,
+      "gain_min": 0.003440261670403233,
+      "gain_max": 0.008686238719015305,
+      "gain_range": 0.005245977048612072
+    },
+    {
+      "setting": "rn18_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "none",
+      "n_operators": 11,
+      "n_pairs": 55,
+      "n_cross": 0,
+      "Fcross": 0.0,
+      "Mmax": 0.004707385915646123,
+      "gain_mean": 0.007896298977162153,
+      "gain_min": 0.0045316674399978885,
+      "gain_max": 0.009239053355644011,
+      "gain_range": 0.004707385915646123
+    },
+    {
+      "setting": "rn18_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "max",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 0,
+      "Fcross": 0.0,
+      "Mmax": 0.004707385915646123,
+      "gain_mean": 0.007985600861633625,
+      "gain_min": 0.0045316674399978885,
+      "gain_max": 0.009239053355644011,
+      "gain_range": 0.004707385915646123
+    },
+    {
+      "setting": "rn18_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 0,
+      "Fcross": 0.0,
+      "Mmax": 0.004707385915646123,
+      "gain_mean": 0.007933394427136354,
+      "gain_min": 0.0045316674399978885,
+      "gain_max": 0.009239053355644011,
+      "gain_range": 0.004707385915646123
+    },
+    {
+      "setting": "rn18_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "min",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 0,
+      "Fcross": 0.0,
+      "Mmax": 0.004707385915646123,
+      "gain_mean": 0.007801571271999164,
+      "gain_min": 0.0045316674399978885,
+      "gain_max": 0.009239053355644011,
+      "gain_range": 0.004707385915646123
+    },
+    {
+      "setting": "rn18_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "avg_top2",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 0,
+      "Fcross": 0.0,
+      "Mmax": 0.004707385915646123,
+      "gain_mean": 0.00787787868570563,
+      "gain_min": 0.0045316674399978885,
+      "gain_max": 0.009239053355644011,
+      "gain_range": 0.004707385915646123
+    },
+    {
+      "setting": "rn18_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "fixed_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 0,
+      "Fcross": 0.0,
+      "Mmax": 0.004707385915646123,
+      "gain_mean": 0.007848093267876655,
+      "gain_min": 0.0045316674399978885,
+      "gain_max": 0.009239053355644011,
+      "gain_range": 0.004707385915646123
+    },
+    {
+      "setting": "rn18_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "learned_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 0,
+      "Fcross": 0.0,
+      "Mmax": 0.004707385915646123,
+      "gain_mean": 0.0077969634486222735,
+      "gain_min": 0.0045316674399978885,
+      "gain_max": 0.009239053355644011,
+      "gain_range": 0.004707385915646123
+    },
+    {
+      "setting": "rn18_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "t_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 0,
+      "Fcross": 0.0,
+      "Mmax": 0.004357986822563054,
+      "gain_mean": 0.007762023539313967,
+      "gain_min": 0.0045316674399978885,
+      "gain_max": 0.008889654262560942,
+      "gain_range": 0.004357986822563054
+    },
+    {
+      "setting": "rn18_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "v0_max_mean_min",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 0,
+      "Fcross": 0.0,
+      "Mmax": 0.004707385915646123,
+      "gain_mean": 0.00789013145770413,
+      "gain_min": 0.0045316674399978885,
+      "gain_max": 0.009239053355644011,
+      "gain_range": 0.004707385915646123
+    },
+    {
+      "setting": "rn18_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "btsp",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 0,
+      "Fcross": 0.0,
+      "Mmax": 0.004707385915646123,
+      "gain_mean": 0.007829371540407781,
+      "gain_min": 0.0045316674399978885,
+      "gain_max": 0.009239053355644011,
+      "gain_range": 0.004707385915646123
+    },
+    {
+      "setting": "rn18_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "diag_partition_matched",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 0,
+      "Fcross": 0.0,
+      "Mmax": 0.004707385915646123,
+      "gain_mean": 0.007901498117505523,
+      "gain_min": 0.0045316674399978885,
+      "gain_max": 0.009239053355644011,
+      "gain_range": 0.004707385915646123
+    },
+    {
+      "setting": "rn18_crack500_30",
+      "seed_scope": "mean_3",
+      "budget_low": 15,
+      "budget_high": 30,
+      "omitted_operator": "stride_conv",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 0,
+      "Fcross": 0.0,
+      "Mmax": 0.002235773223196569,
+      "gain_mean": 0.00823276213087858,
+      "gain_min": 0.0070032801324474425,
+      "gain_max": 0.009239053355644011,
+      "gain_range": 0.002235773223196569
+    },
+    {
+      "setting": "unet_deepcrack537_cosine",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "none",
+      "n_operators": 11,
+      "n_pairs": 55,
+      "n_cross": 27,
+      "Fcross": 0.4909090909090909,
+      "Mmax": 0.015968733220014686,
+      "gain_mean": 0.009264568534539285,
+      "gain_min": 0.0035547108426975393,
+      "gain_max": 0.019523444062712225,
+      "gain_range": 0.015968733220014686
+    },
+    {
+      "setting": "unet_deepcrack537_cosine",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "max",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 24,
+      "Fcross": 0.5333333333333333,
+      "Mmax": 0.015968733220014686,
+      "gain_mean": 0.009421854273592822,
+      "gain_min": 0.0035547108426975393,
+      "gain_max": 0.019523444062712225,
+      "gain_range": 0.015968733220014686
+    },
+    {
+      "setting": "unet_deepcrack537_cosine",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 22,
+      "Fcross": 0.4888888888888889,
+      "Mmax": 0.015968733220014686,
+      "gain_mean": 0.009000516255750735,
+      "gain_min": 0.0035547108426975393,
+      "gain_max": 0.019523444062712225,
+      "gain_range": 0.015968733220014686
+    },
+    {
+      "setting": "unet_deepcrack537_cosine",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "min",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 20,
+      "Fcross": 0.4444444444444444,
+      "Mmax": 0.015968733220014686,
+      "gain_mean": 0.008677562862480837,
+      "gain_min": 0.0035547108426975393,
+      "gain_max": 0.019523444062712225,
+      "gain_range": 0.015968733220014686
+    },
+    {
+      "setting": "unet_deepcrack537_cosine",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "avg_top2",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 23,
+      "Fcross": 0.5111111111111111,
+      "Mmax": 0.015968733220014686,
+      "gain_mean": 0.009732635102725573,
+      "gain_min": 0.0035547108426975393,
+      "gain_max": 0.019523444062712225,
+      "gain_range": 0.015968733220014686
+    },
+    {
+      "setting": "unet_deepcrack537_cosine",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "fixed_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 24,
+      "Fcross": 0.5333333333333333,
+      "Mmax": 0.015968733220014686,
+      "gain_mean": 0.009419517975067727,
+      "gain_min": 0.0035547108426975393,
+      "gain_max": 0.019523444062712225,
+      "gain_range": 0.015968733220014686
+    },
+    {
+      "setting": "unet_deepcrack537_cosine",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "learned_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 23,
+      "Fcross": 0.5111111111111111,
+      "Mmax": 0.015968733220014686,
+      "gain_mean": 0.009545126429682027,
+      "gain_min": 0.0035547108426975393,
+      "gain_max": 0.019523444062712225,
+      "gain_range": 0.015968733220014686
+    },
+    {
+      "setting": "unet_deepcrack537_cosine",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "t_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 23,
+      "Fcross": 0.5111111111111111,
+      "Mmax": 0.014939541210035823,
+      "gain_mean": 0.00983555430372346,
+      "gain_min": 0.0045839028526764025,
+      "gain_max": 0.019523444062712225,
+      "gain_range": 0.014939541210035823
+    },
+    {
+      "setting": "unet_deepcrack537_cosine",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "v0_max_mean_min",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 18,
+      "Fcross": 0.4,
+      "Mmax": 0.011579914412426229,
+      "gain_mean": 0.00823868098172199,
+      "gain_min": 0.0035547108426975393,
+      "gain_max": 0.015134625255123768,
+      "gain_range": 0.011579914412426229
+    },
+    {
+      "setting": "unet_deepcrack537_cosine",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "btsp",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 24,
+      "Fcross": 0.5333333333333333,
+      "Mmax": 0.015968733220014686,
+      "gain_mean": 0.009421630438110618,
+      "gain_min": 0.0035547108426975393,
+      "gain_max": 0.019523444062712225,
+      "gain_range": 0.015968733220014686
+    },
+    {
+      "setting": "unet_deepcrack537_cosine",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "diag_partition_matched",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 19,
+      "Fcross": 0.4222222222222222,
+      "Mmax": 0.015968733220014686,
+      "gain_mean": 0.008901046756006082,
+      "gain_min": 0.0035547108426975393,
+      "gain_max": 0.019523444062712225,
+      "gain_range": 0.015968733220014686
+    },
+    {
+      "setting": "unet_deepcrack537_cosine",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "stride_conv",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 23,
+      "Fcross": 0.5111111111111111,
+      "Mmax": 0.015968733220014686,
+      "gain_mean": 0.009716128501070264,
+      "gain_min": 0.0035547108426975393,
+      "gain_max": 0.019523444062712225,
+      "gain_range": 0.015968733220014686
+    },
+    {
+      "setting": "cnx_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "none",
+      "n_operators": 11,
+      "n_pairs": 55,
+      "n_cross": 2,
+      "Fcross": 0.03636363636363636,
+      "Mmax": 0.005659137154493288,
+      "gain_mean": 0.011795526237089874,
+      "gain_min": 0.009319835151141875,
+      "gain_max": 0.014978972305635163,
+      "gain_range": 0.005659137154493288
+    },
+    {
+      "setting": "cnx_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "max",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 0,
+      "Fcross": 0.0,
+      "Mmax": 0.0033740684667218357,
+      "gain_mean": 0.011477181630235344,
+      "gain_min": 0.009319835151141875,
+      "gain_max": 0.012693903617863711,
+      "gain_range": 0.0033740684667218357
+    },
+    {
+      "setting": "cnx_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 2,
+      "Fcross": 0.044444444444444446,
+      "Mmax": 0.005659137154493288,
+      "gain_mean": 0.01170568849901249,
+      "gain_min": 0.009319835151141875,
+      "gain_max": 0.014978972305635163,
+      "gain_range": 0.005659137154493288
+    },
+    {
+      "setting": "cnx_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "min",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 2,
+      "Fcross": 0.044444444444444446,
+      "Mmax": 0.005659137154493288,
+      "gain_mean": 0.011757985585449725,
+      "gain_min": 0.009319835151141875,
+      "gain_max": 0.014978972305635163,
+      "gain_range": 0.005659137154493288
+    },
+    {
+      "setting": "cnx_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "avg_top2",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 1,
+      "Fcross": 0.022222222222222223,
+      "Mmax": 0.005130371450067783,
+      "gain_mean": 0.012043095345684674,
+      "gain_min": 0.00984860085556738,
+      "gain_max": 0.014978972305635163,
+      "gain_range": 0.005130371450067783
+    },
+    {
+      "setting": "cnx_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "fixed_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 2,
+      "Fcross": 0.044444444444444446,
+      "Mmax": 0.005659137154493288,
+      "gain_mean": 0.0118202978167271,
+      "gain_min": 0.009319835151141875,
+      "gain_max": 0.014978972305635163,
+      "gain_range": 0.005659137154493288
+    },
+    {
+      "setting": "cnx_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "learned_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 1,
+      "Fcross": 0.022222222222222223,
+      "Mmax": 0.005659137154493288,
+      "gain_mean": 0.011990218775242123,
+      "gain_min": 0.009319835151141875,
+      "gain_max": 0.014978972305635163,
+      "gain_range": 0.005659137154493288
+    },
+    {
+      "setting": "cnx_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "t_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 2,
+      "Fcross": 0.044444444444444446,
+      "Mmax": 0.005659137154493288,
+      "gain_mean": 0.011765111015190455,
+      "gain_min": 0.009319835151141875,
+      "gain_max": 0.014978972305635163,
+      "gain_range": 0.005659137154493288
+    },
+    {
+      "setting": "cnx_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "v0_max_mean_min",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 2,
+      "Fcross": 0.044444444444444446,
+      "Mmax": 0.005659137154493288,
+      "gain_mean": 0.011826455505249533,
+      "gain_min": 0.009319835151141875,
+      "gain_max": 0.014978972305635163,
+      "gain_range": 0.005659137154493288
+    },
+    {
+      "setting": "cnx_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "btsp",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 2,
+      "Fcross": 0.044444444444444446,
+      "Mmax": 0.005659137154493288,
+      "gain_mean": 0.011772709580776242,
+      "gain_min": 0.009319835151141875,
+      "gain_max": 0.014978972305635163,
+      "gain_range": 0.005659137154493288
+    },
+    {
+      "setting": "cnx_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "diag_partition_matched",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 2,
+      "Fcross": 0.044444444444444446,
+      "Mmax": 0.005659137154493288,
+      "gain_mean": 0.011814232597372942,
+      "gain_min": 0.009319835151141875,
+      "gain_max": 0.014978972305635163,
+      "gain_range": 0.005659137154493288
+    },
+    {
+      "setting": "cnx_deepcrack537_90",
+      "seed_scope": "mean_3",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "stride_conv",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 2,
+      "Fcross": 0.044444444444444446,
+      "Mmax": 0.005659137154493288,
+      "gain_mean": 0.011777812257047982,
+      "gain_min": 0.009319835151141875,
+      "gain_max": 0.014978972305635163,
+      "gain_range": 0.005659137154493288
+    }
+  ],
+  "strongest_setting_per_seed_results": [
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2026",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "none",
+      "n_operators": 11,
+      "n_pairs": 55,
+      "n_cross": 40,
+      "Fcross": 0.7272727272727273,
+      "Mmax": 0.03133933435910485,
+      "gain_mean": 0.020022964943929765,
+      "gain_min": 0.004071733223217633,
+      "gain_max": 0.035411067582322486,
+      "gain_range": 0.03133933435910485
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2026",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "max",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 33,
+      "Fcross": 0.7333333333333333,
+      "Mmax": 0.03133933435910485,
+      "gain_mean": 0.020529437017025164,
+      "gain_min": 0.004071733223217633,
+      "gain_max": 0.035411067582322486,
+      "gain_range": 0.03133933435910485
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2026",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 33,
+      "Fcross": 0.7333333333333333,
+      "Mmax": 0.03133933435910485,
+      "gain_mean": 0.02067945047299975,
+      "gain_min": 0.004071733223217633,
+      "gain_max": 0.035411067582322486,
+      "gain_range": 0.03133933435910485
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2026",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "min",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 31,
+      "Fcross": 0.6888888888888889,
+      "Mmax": 0.03133933435910485,
+      "gain_mean": 0.01876448948296462,
+      "gain_min": 0.004071733223217633,
+      "gain_max": 0.035411067582322486,
+      "gain_range": 0.03133933435910485
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2026",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "avg_top2",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 34,
+      "Fcross": 0.7555555555555555,
+      "Mmax": 0.03133933435910485,
+      "gain_mean": 0.019958167249681247,
+      "gain_min": 0.004071733223217633,
+      "gain_max": 0.035411067582322486,
+      "gain_range": 0.03133933435910485
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2026",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "fixed_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 33,
+      "Fcross": 0.7333333333333333,
+      "Mmax": 0.03133933435910485,
+      "gain_mean": 0.019713860519872173,
+      "gain_min": 0.004071733223217633,
+      "gain_max": 0.035411067582322486,
+      "gain_range": 0.03133933435910485
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2026",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "learned_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 34,
+      "Fcross": 0.7555555555555555,
+      "Mmax": 0.03133933435910485,
+      "gain_mean": 0.01998977174728265,
+      "gain_min": 0.004071733223217633,
+      "gain_max": 0.035411067582322486,
+      "gain_range": 0.03133933435910485
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2026",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "t_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 35,
+      "Fcross": 0.7777777777777778,
+      "Mmax": 0.03133933435910485,
+      "gain_mean": 0.020265647149702325,
+      "gain_min": 0.004071733223217633,
+      "gain_max": 0.035411067582322486,
+      "gain_range": 0.03133933435910485
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2026",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "v0_max_mean_min",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 31,
+      "Fcross": 0.6888888888888889,
+      "Mmax": 0.028535986330363583,
+      "gain_mean": 0.018484154680090494,
+      "gain_min": 0.004071733223217633,
+      "gain_max": 0.032607719553581216,
+      "gain_range": 0.028535986330363583
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2026",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "btsp",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 33,
+      "Fcross": 0.7333333333333333,
+      "Mmax": 0.03133933435910485,
+      "gain_mean": 0.020627256865568065,
+      "gain_min": 0.004071733223217633,
+      "gain_max": 0.035411067582322486,
+      "gain_range": 0.03133933435910485
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2026",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "diag_partition_matched",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 33,
+      "Fcross": 0.7333333333333333,
+      "Mmax": 0.03133933435910485,
+      "gain_mean": 0.019622291082039944,
+      "gain_min": 0.004071733223217633,
+      "gain_max": 0.035411067582322486,
+      "gain_range": 0.03133933435910485
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2026",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "stride_conv",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 30,
+      "Fcross": 0.6666666666666666,
+      "Mmax": 0.021952957929092576,
+      "gain_mean": 0.021618088116000977,
+      "gain_min": 0.01345810965322991,
+      "gain_max": 0.035411067582322486,
+      "gain_range": 0.021952957929092576
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2027",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "none",
+      "n_operators": 11,
+      "n_pairs": 55,
+      "n_cross": 26,
+      "Fcross": 0.4727272727272727,
+      "Mmax": 0.016594545055362397,
+      "gain_mean": 0.01580789632091173,
+      "gain_min": 0.007406915844133999,
+      "gain_max": 0.024001460899496396,
+      "gain_range": 0.016594545055362397
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2027",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "max",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 22,
+      "Fcross": 0.4888888888888889,
+      "Mmax": 0.016594545055362397,
+      "gain_mean": 0.01595869042763537,
+      "gain_min": 0.007406915844133999,
+      "gain_max": 0.024001460899496396,
+      "gain_range": 0.016594545055362397
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2027",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 23,
+      "Fcross": 0.5111111111111111,
+      "Mmax": 0.016594545055362397,
+      "gain_mean": 0.015779942299232054,
+      "gain_min": 0.007406915844133999,
+      "gain_max": 0.024001460899496396,
+      "gain_range": 0.016594545055362397
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2027",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "min",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 20,
+      "Fcross": 0.4444444444444444,
+      "Mmax": 0.016594545055362397,
+      "gain_mean": 0.015285476641982976,
+      "gain_min": 0.007406915844133999,
+      "gain_max": 0.024001460899496396,
+      "gain_range": 0.016594545055362397
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2027",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "avg_top2",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 18,
+      "Fcross": 0.4,
+      "Mmax": 0.016594545055362397,
+      "gain_mean": 0.015093277579179132,
+      "gain_min": 0.007406915844133999,
+      "gain_max": 0.024001460899496396,
+      "gain_range": 0.016594545055362397
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2027",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "fixed_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 23,
+      "Fcross": 0.5111111111111111,
+      "Mmax": 0.016594545055362397,
+      "gain_mean": 0.016159018420255113,
+      "gain_min": 0.007406915844133999,
+      "gain_max": 0.024001460899496396,
+      "gain_range": 0.016594545055362397
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2027",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "learned_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 19,
+      "Fcross": 0.4222222222222222,
+      "Mmax": 0.012133523904080068,
+      "gain_mean": 0.016647994368589502,
+      "gain_min": 0.011867936995416328,
+      "gain_max": 0.024001460899496396,
+      "gain_range": 0.012133523904080068
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2027",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "t_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 23,
+      "Fcross": 0.5111111111111111,
+      "Mmax": 0.016594545055362397,
+      "gain_mean": 0.01620189225346127,
+      "gain_min": 0.007406915844133999,
+      "gain_max": 0.024001460899496396,
+      "gain_range": 0.016594545055362397
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2027",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "v0_max_mean_min",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 22,
+      "Fcross": 0.4888888888888889,
+      "Mmax": 0.016594545055362397,
+      "gain_mean": 0.015821390998343742,
+      "gain_min": 0.007406915844133999,
+      "gain_max": 0.024001460899496396,
+      "gain_range": 0.016594545055362397
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2027",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "btsp",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 18,
+      "Fcross": 0.4,
+      "Mmax": 0.015547167894103708,
+      "gain_mean": 0.014988539863053263,
+      "gain_min": 0.007406915844133999,
+      "gain_max": 0.022954083738237707,
+      "gain_range": 0.015547167894103708
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2027",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "diag_partition_matched",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 23,
+      "Fcross": 0.5111111111111111,
+      "Mmax": 0.016594545055362397,
+      "gain_mean": 0.015751317080614634,
+      "gain_min": 0.007406915844133999,
+      "gain_max": 0.024001460899496396,
+      "gain_range": 0.016594545055362397
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2027",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "stride_conv",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 23,
+      "Fcross": 0.5111111111111111,
+      "Mmax": 0.016594545055362397,
+      "gain_mean": 0.01619931959768197,
+      "gain_min": 0.007406915844133999,
+      "gain_max": 0.024001460899496396,
+      "gain_range": 0.016594545055362397
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2028",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "none",
+      "n_operators": 11,
+      "n_pairs": 55,
+      "n_cross": 40,
+      "Fcross": 0.7272727272727273,
+      "Mmax": 0.03081687668754063,
+      "gain_mean": 0.0235972775230602,
+      "gain_min": 0.012231340587070538,
+      "gain_max": 0.04304821727461117,
+      "gain_range": 0.03081687668754063
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2028",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "max",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 33,
+      "Fcross": 0.7333333333333333,
+      "Mmax": 0.03081687668754063,
+      "gain_mean": 0.02403613402256276,
+      "gain_min": 0.012231340587070538,
+      "gain_max": 0.04304821727461117,
+      "gain_range": 0.03081687668754063
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2028",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 32,
+      "Fcross": 0.7111111111111111,
+      "Mmax": 0.03081687668754063,
+      "gain_mean": 0.022901075789894275,
+      "gain_min": 0.012231340587070538,
+      "gain_max": 0.04304821727461117,
+      "gain_range": 0.03081687668754063
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2028",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "min",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 30,
+      "Fcross": 0.6666666666666666,
+      "Mmax": 0.018327954267648883,
+      "gain_mean": 0.0216521835479051,
+      "gain_min": 0.012231340587070538,
+      "gain_max": 0.03055929485471942,
+      "gain_range": 0.018327954267648883
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2028",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "avg_top2",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 31,
+      "Fcross": 0.6888888888888889,
+      "Mmax": 0.029279407313389405,
+      "gain_mean": 0.024733871216659164,
+      "gain_min": 0.013768809961221762,
+      "gain_max": 0.04304821727461117,
+      "gain_range": 0.029279407313389405
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2028",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "fixed_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 32,
+      "Fcross": 0.7111111111111111,
+      "Mmax": 0.03081687668754063,
+      "gain_mean": 0.024580124279244043,
+      "gain_min": 0.012231340587070538,
+      "gain_max": 0.04304821727461117,
+      "gain_range": 0.03081687668754063
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2028",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "learned_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 33,
+      "Fcross": 0.7333333333333333,
+      "Mmax": 0.03081687668754063,
+      "gain_mean": 0.023443276790930535,
+      "gain_min": 0.012231340587070538,
+      "gain_max": 0.04304821727461117,
+      "gain_range": 0.03081687668754063
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2028",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "t_max_avg",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 33,
+      "Fcross": 0.7333333333333333,
+      "Mmax": 0.03081687668754063,
+      "gain_mean": 0.023964476861122706,
+      "gain_min": 0.012231340587070538,
+      "gain_max": 0.04304821727461117,
+      "gain_range": 0.03081687668754063
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2028",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "v0_max_mean_min",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 34,
+      "Fcross": 0.7555555555555555,
+      "Mmax": 0.03081687668754063,
+      "gain_mean": 0.023343125886797787,
+      "gain_min": 0.012231340587070538,
+      "gain_max": 0.04304821727461117,
+      "gain_range": 0.03081687668754063
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2028",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "btsp",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 33,
+      "Fcross": 0.7333333333333333,
+      "Mmax": 0.03081687668754063,
+      "gain_mean": 0.0241429354795075,
+      "gain_min": 0.012231340587070538,
+      "gain_max": 0.04304821727461117,
+      "gain_range": 0.03081687668754063
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2028",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "diag_partition_matched",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 34,
+      "Fcross": 0.7555555555555555,
+      "Mmax": 0.03081687668754063,
+      "gain_mean": 0.023208162363861907,
+      "gain_min": 0.012231340587070538,
+      "gain_max": 0.04304821727461117,
+      "gain_range": 0.03081687668754063
+    },
+    {
+      "setting": "unet_deepcrack537_90",
+      "seed_scope": "2028",
+      "budget_low": 30,
+      "budget_high": 90,
+      "omitted_operator": "stride_conv",
+      "n_operators": 10,
+      "n_pairs": 45,
+      "n_cross": 35,
+      "Fcross": 0.7777777777777778,
+      "Mmax": 0.03081687668754063,
+      "gain_mean": 0.023564686515176403,
+      "gain_min": 0.012231340587070538,
+      "gain_max": 0.04304821727461117,
+      "gain_range": 0.03081687668754063
+    }
+  ],
+  "gains_by_setting": {
+    "unet_deepcrack537_90": {
+      "max": 0.01615563733156178,
+      "avg": 0.02003494701521924,
+      "min": 0.032229343312797254,
+      "avg_top2": 0.0186187887372411,
+      "fixed_max_avg": 0.016393164824401896,
+      "learned_max_avg": 0.017633032532963888,
+      "t_max_avg": 0.01646312134135186,
+      "v0_max_mean_min": 0.025740937004866238,
+      "btsp": 0.018707401528543555,
+      "diag_partition_matched": 0.022630607133917846,
+      "stride_conv": 0.013296194792774996
+    },
+    "rn18_deepcrack537_90": {
+      "max": 0.021444619793401398,
+      "avg": 0.020480895104187713,
+      "min": 0.017176843360690253,
+      "avg_top2": 0.02057412767382616,
+      "fixed_max_avg": 0.020016974106680685,
+      "learned_max_avg": 0.017307623490436352,
+      "t_max_avg": 0.018019129937957512,
+      "v0_max_mean_min": 0.023622094283736295,
+      "btsp": 0.02204903547982262,
+      "diag_partition_matched": 0.017419068315712938,
+      "stride_conv": 0.01913351322088752
+    },
+    "unet_crack500_30": {
+      "max": 0.0054551090980372585,
+      "avg": 0.007101814824581276,
+      "min": 0.007330862771408153,
+      "avg_top2": 0.0077772307490250325,
+      "fixed_max_avg": 0.008643153645596646,
+      "learned_max_avg": 0.008686238719015305,
+      "t_max_avg": 0.0077885379780952,
+      "v0_max_mean_min": 0.00533967364172383,
+      "btsp": 0.00538965333723862,
+      "diag_partition_matched": 0.003440261670403233,
+      "stride_conv": 0.0056443329263753395
+    },
+    "rn18_crack500_30": {
+      "max": 0.0070032801324474425,
+      "avg": 0.007525344477420148,
+      "min": 0.008843576028792044,
+      "avg_top2": 0.008080501891727376,
+      "fixed_max_avg": 0.008378356070017134,
+      "learned_max_avg": 0.008889654262560942,
+      "t_max_avg": 0.009239053355644011,
+      "v0_max_mean_min": 0.007957974171742377,
+      "btsp": 0.008565573344705868,
+      "diag_partition_matched": 0.007844307573728448,
+      "stride_conv": 0.0045316674399978885
+    },
+    "unet_deepcrack537_cosine": {
+      "max": 0.00769171114400391,
+      "avg": 0.011905091322424788,
+      "min": 0.015134625255123768,
+      "avg_top2": 0.0045839028526764025,
+      "fixed_max_avg": 0.007715074129254873,
+      "learned_max_avg": 0.006458989583111863,
+      "t_max_avg": 0.0035547108426975393,
+      "v0_max_mean_min": 0.019523444062712225,
+      "btsp": 0.007693949498825958,
+      "diag_partition_matched": 0.01289978631987132,
+      "stride_conv": 0.004748968869229486
+    },
+    "cnx_deepcrack537_90": {
+      "max": 0.014978972305635163,
+      "avg": 0.012693903617863711,
+      "min": 0.012170932753491348,
+      "avg_top2": 0.009319835151141875,
+      "fixed_max_avg": 0.01154781044071762,
+      "learned_max_avg": 0.00984860085556738,
+      "t_max_avg": 0.012099678456084062,
+      "v0_max_mean_min": 0.011486233555493275,
+      "btsp": 0.012023692800226193,
+      "diag_partition_matched": 0.011608462634259187,
+      "stride_conv": 0.011972666037508795
+    }
+  }
+}
